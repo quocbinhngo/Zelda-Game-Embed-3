@@ -5,6 +5,7 @@
 
 void image_mode()
 {
+    framebf_init(300, 300, IMAGE_WIDTH, IMAGE_HEIGHT);
     display_image(image_allArray[0]);
     int y_offset = 0;
 
@@ -24,6 +25,5 @@ void image_mode()
 
 void display_image(const unsigned long *image)
 {
-    framebf_init(400, 400, IMAGE_WIDTH, IMAGE_HEIGHT);
     drawImage(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT, image);
 }

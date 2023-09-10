@@ -1,5 +1,16 @@
 #include "font.h"
 #include "../framebf.h"
+#include "font_resources.h"
+
+// function to assign font value to an array
+void assignArray(int *des, int fontIndex)
+{
+    for (int i = fontIndex; i < fontIndex + 8; i++)
+    {
+        *des = convertedFont[i];
+        des += 1;
+    }
+}
 
 // function to count the how many pixel required by a character
 int countSpaces(char character)

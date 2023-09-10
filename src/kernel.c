@@ -3,7 +3,7 @@
 #include "framebf.h"
 #include "image/image.h"
 #include "font/font.h"
-
+#include "game/game.h"
 
 void main()
 {
@@ -14,8 +14,12 @@ void main()
     // Initialize frame buffer
 
     // image_mode();
-    stringFont(0, 0, "Double2T", 0x2224ab);
+    // stringFont(0, 0, "Tran Duc Linh", 0xafbec1);
 
+    
+    game_mode();
+
+    // image_mode();
 
     // display_image(image_allArray[0]);
 

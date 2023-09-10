@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "mbox.h": "c"
+        "mbox.h": "c",
+        "image.h": "c",
+        "font.h": "c"
     }
 }

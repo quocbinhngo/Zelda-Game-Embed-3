@@ -1,5 +1,7 @@
 #include "mbox.h"
 #include "uart.h"
+// #include "./image/tmp_resources.h"
+
 // Use RGBA32 (32 bits for each pixel)
 #define COLOR_DEPTH 32
 // Pixel Order: BGR in memory order (little endian --> RGB in byte order)
@@ -110,11 +112,21 @@ void drawImage(int x, int y, int w, int h, const unsigned long *image)
     {
         for (int j = y, cnt_h = 0; cnt_h < h; j++, cnt_h++)
         {
-            drawPixelARGB32(x + i, y + j, image[i + w * j]);
+            drawPixelARGB32(i, j, image[cnt_w + cnt_h * w]);
         }
     }
 }
 
+void redrawBackground(int x, int y, const unsigned long *image)
+{
+    for (int i = x; i < 64; i++)
+    {
+        for (int j = y; j < 64; j++)
+        {
+            drawPixelARGB32(i, j, image[i + j * 64]);
+        }
+    }
+}
 // void drawImage(int x, int y, int w, int h, const unsigned long *img)
 // {
 //     for (int i = 0, cnt1 = 0; cnt1 < w; cnt1++, i++)
