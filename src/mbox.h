@@ -1,3 +1,6 @@
+#ifndef MBOX_H_
+#define MBOX_H_
+
 #include "gpio.h"
 /* a properly aligned buffer */
 extern volatile unsigned int mBuf[36];
@@ -51,3 +54,5 @@ extern volatile unsigned int mBuf[36];
 
 /* Function Prototypes */
 int mbox_call(unsigned int buffer_addr, unsigned char channel);
+
+#endif

@@ -1,4 +1,8 @@
+#ifndef GPIO_H_
+#define GPIO_H_
+
 // -----------------------------------gpio.h -------------------------------------
+
 
 /* Raspberry Pi's peripheral physical address (MMIO_BASE) is 0xFE000000 in RPI4, 0x3F000000 in RPI3
 --> Select correct option to set the value properly 
@@ -44,3 +48,5 @@ typedef unsigned char uint8_t;
 typedef unsigned short int uint16_t;
 typedef unsigned int uint32_t;
 typedef unsigned long int uint64_t;
+
+#endif

@@ -5,11 +5,10 @@ IMAGE_DIR = ./src/image
 
 #--------------------------------------Makefile-------------------------------------
 CFILES = $(wildcard $(SRC_DIR)/*.c)
-OFILES = $(CFILES:./src/%.c=./build/%.o)
+OFILES = $(CFILES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 
-IMAGECFILES = $(wildcard ./src/image/*.c)
-IMAGEOFILES = $(CFILES:./src/image/%.c=./build/%.o)
-
+IMAGECFILES = $(wildcard $(IMAGE_DIR)/*.c)
+IMAGEOFILES = $(IMAGECFILES:$(IMAGE_DIR)/%.c=$(BUILD_DIR)/%.o)
 
 
 GCCFLAGS = -Wall -O2 -ffreestanding -nostdinc -nostdlib
@@ -17,17 +16,18 @@ LDFLAGS = -nostdlib
 
 all: clean kernel8.img run
 
-
-
-./build/boot.o: ./src/boot.S
+$(BUILD_DIR)/boot.o: $(SRC_DIR)/boot.S
 	aarch64-none-elf-gcc $(GCCFLAGS) -c $< -o $@
 
-./build/%.o: ./src/%.c     
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c     
 	aarch64-none-elf-gcc $(GCCFLAGS) -c $< -o $@
 
-kernel8.img: ./build/boot.o $(OFILES)   $(IMAGEOFILES)  
-	aarch64-none-elf-ld $(LDFLAGS) ./build/boot.o $(OFILES) $(IMAGEOFILES)    -T ./src/link.ld -o ./build/kernel8.elf
-	aarch64-none-elf-objcopy -O binary ./build/kernel8.elf kernel8.img
+$(BUILD_DIR)/%.o: $(IMAGE_DIR)/%.c
+	aarch64-none-elf-gcc $(GCCFLAGS) -c $< -o $@
+
+kernel8.img: $(BUILD_DIR)/boot.o $(OFILES) $(IMAGEOFILES)  
+	aarch64-none-elf-ld $(BUILD_DIR)/boot.o $(LDFLAGS) $(OFILES) $(IMAGEOFILES) -T $(SRC_DIR)/link.ld -o $(BUILD_DIR)/kernel8.elf
+	aarch64-none-elf-objcopy -O binary $(BUILD_DIR)/kernel8.elf kernel8.img
 
 clean:
 	del  *.img .\build\*.elf .\build\*.o

@@ -12,20 +12,20 @@ unsigned char *fb;
 /**
  * Set screen resolution to 1024x768
  */
-void framebf_init()
+void framebf_init(int physicalWidth, int physicalHeight, int virtualWidth, int virtualHeight)
 {
     mBuf[0] = 35 * 4; // Length of message in bytes
     mBuf[1] = MBOX_REQUEST;
     mBuf[2] = MBOX_TAG_SETPHYWH;  // Set physical width-height
     mBuf[3] = 8;                  // Value size in bytes
     mBuf[4] = 0;                  // REQUEST CODE = 0
-    mBuf[5] = 1024;               // Value(width)
-    mBuf[6] = 768;                // Value(height)
+    mBuf[5] = physicalWidth;      // Value(width)
+    mBuf[6] = physicalHeight;     // Value(height)
     mBuf[7] = MBOX_TAG_SETVIRTWH; // Set virtual width-height
     mBuf[8] = 8;
     mBuf[9] = 0;
-    mBuf[10] = 1024;
-    mBuf[11] = 768;
+    mBuf[10] = virtualWidth;
+    mBuf[11] = virtualHeight;
     mBuf[12] = MBOX_TAG_SETVIRTOFF; // Set virtual offset
     mBuf[13] = 8;
     mBuf[14] = 0;
@@ -104,10 +104,24 @@ void drawRectARGB32(int x1, int y1, int x2, int y2, unsigned int attr, int fill)
         }
 }
 
-void drawImage(int x, int y, int w, int h, const unsigned long *image) {
-    for (int i = x, cnt_w = 0; cnt_w < w; i++, cnt_w++) {
-        for (int j = y, cnt_h = 0; cnt_h < h; j++, cnt_h++) {
-            drawPixelARGB32(i, j, image[j + w * i]);
+void drawImage(int x, int y, int w, int h, const unsigned long *image)
+{
+    for (int i = x, cnt_w = 0; cnt_w < w; i++, cnt_w++)
+    {
+        for (int j = y, cnt_h = 0; cnt_h < h; j++, cnt_h++)
+        {
+            drawPixelARGB32(x + i, y + j, image[i + w * j]);
         }
     }
 }
+
+// void drawImage(int x, int y, int w, int h, const unsigned long *img)
+// {
+//     for (int i = 0, cnt1 = 0; cnt1 < w; cnt1++, i++)
+//     {
+//         for (int j = 0, cnt2 = 0; cnt2 < h; cnt2++, j++)
+//         {
+//             drawPixelARGB32(x + i, y + j, *(img + (w * j + i)));
+//         }
+//     }
+// }
