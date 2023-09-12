@@ -1,17 +1,16 @@
 #include "stage.h"
 #include "../font/font.h"
 #include "../uart.h"
-#include "game.h"
 #include "../image/tmp_resources.h"
 #include "player.h"
-#include "../framebf.h"
-#include "../mbox.h"
+#include "game_const.h"
+#include "game_controller.h"
 
 void menu_stage(stage *option, stage *main)
 {
 
     // draw background
-    drawImage(0, 0, PHY_GAME_WIDTH, PHY_GAME_HEIGHT, temp_imageallArray[0]);
+    drawImage(0, 0, GAME_WIDTH, GAME_HEIGHT, temp_imageallArray[0]);
 
     stringFont(200, 200, "Hello", 0x00FF00000);
     stringFont(200, 400, "Click space to start", 0x00ffffff);
@@ -28,53 +27,68 @@ void menu_stage(stage *option, stage *main)
     }
 }
 
+void clear_game_map(GameController *game_controller)
+{
+    for (int i = 0; i < MAP_HEIGHT; i++)
+    {
+        for (int j = 0; j < MAP_WIDTH; j++)
+        {
+            (game_controller->game_map)[i][j] = 1;
+            uart_sendc('0' + (game_controller->game_map)[i][j]);
+            uart_puts(" ");
+        }
+        uart_puts("\n");
+    }
+}
+
 void game_stage(stage *main)
 {
     // Draw map
-    drawImage(0, 0, PHY_GAME_WIDTH, PHY_GAME_HEIGHT, temp_imageallArray[0]);
+    // drawImage(0, 0, PHY_GAME_WIDTH, PHY_GAME_HEIGHT, temp_imageallArray[0]);
 
-    uart_puts("Game stage");
+    uart_puts("Game stage 2\n");
+
+    GameController game_controller;
+
+    clear_game_map(&game_controller);
 
     // Init the player
-    init_player();
-    int offset_x = 0, offset_y = 0;
-    int player_x = PHY_GAME_WIDTH / 2, player_y = PHY_GAME_HEIGHT / 2;
+    init_player(&game_controller);
 
-    while (1)
-    {
-        char input = uart_getc();
+    // int offset_x = 0, offset_y = 0;
+    // int player_x = PHY_GAME_WIDTH / 2, player_y = PHY_GAME_HEIGHT / 2;
 
-        uart_sendc(input);
+    // while (1)
+    // {
+    //     char input = uart_getc();
 
-        switch (input)
-        {
-        case 'a':
-        {
-            offset_x = (offset_x - PLAYER_SPEED >= 0) ? offset_x - PLAYER_SPEED : 0;
-            break;
-        }
-        case 'd':
-        {
-            offset_x = (offset_x + PLAYER_SPEED < VIR_GAME_WIDTH) ? offset_x + PLAYER_SPEED : VIR_GAME_WIDTH;
-            break;
-        }
-        case 'w':
-        {
-            offset_y = (offset_y - PLAYER_SPEED >= 0) ? offset_y - PLAYER_SPEED : 0;
-            break;
-        }
-        case 's':
-        {
-            offset_y = (offset_y + PLAYER_SPEED < VIR_GAME_HEIGHT) ? offset_y + PLAYER_SPEED : VIR_GAME_HEIGHT;
-            break;
-        }
-        default:
-        {
-            break;
-        }
-        }
+    //     uart_sendc(input);
 
-        unsigned int **res_data;
-        mbox_buffer_setup(mBuf, MBOX_TAG_SETVIRTOFF, res_data, 0, 2, offset_x, offset_y);
-    }
+    //     switch (input)
+    //     {
+    //     case 'a':
+    //     {
+    //         break;
+    //     }
+    //     case 'd':
+    //     {
+    //         break;
+    //     }
+    //     case 'w':
+    //     {
+    //         break;
+    //     }
+    //     case 's':
+    //     {
+    //         break;
+    //     }
+    //     default:
+    //     {
+    //         break;
+    //     }
+    //     }
+
+    //     unsigned int **res_data;
+    //     mbox_buffer_setup(mBuf, MBOX_TAG_SETVIRTOFF, res_data, 0, 2, offset_x, offset_y);
+    // }
 }

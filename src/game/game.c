@@ -2,8 +2,8 @@
 #include "../font/font.h"
 #include "../image/image.h"
 #include "../time.h"
-#include "game.h"
-
+#include "game_const.h"
+#include "../uart.h"
 
 // #define VIR_GAME_WIDTH 1280
 // #define VIR_GAME_HEIGHT 720
@@ -14,15 +14,14 @@
 void game_mode()
 {
 
-    framebf_init(PHY_GAME_WIDTH, PHY_GAME_HEIGHT, VIR_GAME_WIDTH , VIR_GAME_HEIGHT);
+    framebf_init(GAME_WIDTH, GAME_HEIGHT, GAME_WIDTH, GAME_HEIGHT);
 
-    stage cur_stage = MENU;
+    stage cur_stage = GAME;
     stage option = GAME;
-
-    // wait_msec(2000000);
 
     while (1)
     {
+        uart_puts("Hello world\n");
 
         switch (cur_stage)
         {
@@ -34,7 +33,10 @@ void game_mode()
         }
         case GAME:
         {
+            uart_puts("Game stage 1\n");
             game_stage(&cur_stage);
+            uart_puts("Finish game stasge\n");
+
             break;
         }
         }

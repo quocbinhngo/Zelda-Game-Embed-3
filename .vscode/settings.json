@@ -2,6 +2,10 @@
     "files.associations": {
         "mbox.h": "c",
         "image.h": "c",
-        "font.h": "c"
+        "font.h": "c",
+        "game.h": "c",
+        "framebf.h": "c",
+        "uart.h": "c",
+        "game_const.h": "c"
     }
 }
