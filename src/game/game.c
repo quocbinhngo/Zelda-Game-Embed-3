@@ -21,7 +21,6 @@ void game_mode()
 
     while (1)
     {
-        uart_puts("Hello world\n");
 
         switch (cur_stage)
         {
@@ -33,10 +32,7 @@ void game_mode()
         }
         case GAME:
         {
-            uart_puts("Game stage 1\n");
             game_stage(&cur_stage);
-            uart_puts("Finish game stasge\n");
-
             break;
         }
         }

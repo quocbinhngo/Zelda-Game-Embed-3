@@ -2,7 +2,7 @@
 #include "mbox.h"
 #include "gpio.h"
 #include "uart.h"
-#include "C:\Program Files (x86)\gcc-arm-10.3-2021.07-mingw-w64-i686-aarch64-none-elf\lib\gcc\aarch64-none-elf\10.3.1\include\stdarg.h"
+#include "stdarg.h"
 
 /* Mailbox Data Buffer (each element is 32-bit)*/
 /*

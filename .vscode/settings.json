@@ -6,6 +6,7 @@
         "game.h": "c",
         "framebf.h": "c",
         "uart.h": "c",
-        "game_const.h": "c"
+        "game_const.h": "c",
+        "player.h": "c"
     }
 }

@@ -1,11 +1,16 @@
-#ifndef PLAYER_H_
-#define PLAYER_H_
-
-#include "game_controller.h"
+#ifndef _PLAYER_H
+#define _PLAYER_H
 
 
-#define PLAYER_SPEED 5
+#define PLAYER_SPEED 32
+#define ATTACK_DELAY 5
 
-void init_player(GameController *game_controller);
+typedef struct Player
+{
+    int coor_x, coor_y;
+} Player;
+
+
+
 
 #endif

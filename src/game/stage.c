@@ -27,33 +27,28 @@ void menu_stage(stage *option, stage *main)
     }
 }
 
-void clear_game_map(GameController *game_controller)
-{
-    for (int i = 0; i < MAP_HEIGHT; i++)
-    {
-        for (int j = 0; j < MAP_WIDTH; j++)
-        {
-            (game_controller->game_map)[i][j] = 1;
-            uart_sendc('0' + (game_controller->game_map)[i][j]);
-            uart_puts(" ");
-        }
-        uart_puts("\n");
-    }
-}
-
 void game_stage(stage *main)
 {
     // Draw map
     // drawImage(0, 0, PHY_GAME_WIDTH, PHY_GAME_HEIGHT, temp_imageallArray[0]);
 
-    uart_puts("Game stage 2\n");
+    GameController *game_controller;
+    Player *player;
 
-    GameController game_controller;
+    ClearGameMap(game_controller);
+    InitPlayer(game_controller, player);
 
-    clear_game_map(&game_controller);
+    while (1)
+    {
+        char input = uart_getc();
+        uart_sendc(input);
+        uart_puts("\n");
 
-    // Init the player
-    init_player(&game_controller);
+        if (IsMoveInput(input))
+        {
+            MovePlayer(game_controller, player, input);
+        }
+    }
 
     // int offset_x = 0, offset_y = 0;
     // int player_x = PHY_GAME_WIDTH / 2, player_y = PHY_GAME_HEIGHT / 2;
