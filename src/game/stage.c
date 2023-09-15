@@ -38,7 +38,7 @@ void game_stage(stage *main)
     Enemy enemy;
 
     ClearGameMap(game_controller);
-    InitPlayer(game_controller,& player);
+    InitPlayer(game_controller, &player);
     InitEnemy(game_controller, &enemy);
 
     // uart_hex(&player);
@@ -47,16 +47,20 @@ void game_stage(stage *main)
 
     while (1)
     {
-        
+
         char input = getUart();
         uart_sendc(input);
         uart_puts("\n");
-        
+
         if (IsMoveInput(input))
         {
-            MovePlayer(game_controller,&player, input);
+            MovePlayer(game_controller, &player, input);
         }
-        wait_msec(500000);
+        else if (IsAttackInput(input))
+        {
+            PlayerAttack(game_controller, &player);
+        }
+        wait_msec(50000);
         MoveEnemy(game_controller, &enemy, &player);
     }
 
