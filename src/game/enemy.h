@@ -4,8 +4,8 @@
 #define ENEMY_SPEED 1
 
 typedef struct Enemy {
-    int coor_x, coor_y;
-
+    int coor_x,coor_y;
+    int active;
     
 } Enemy;
 

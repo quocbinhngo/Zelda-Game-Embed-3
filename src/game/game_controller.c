@@ -29,7 +29,7 @@ void ClearGameMap(GameController *game_controller)
     {
         for (int j = 0; j < MAP_WIDTH; j++)
         {
-            (game_controller->game_map)[i][j] = 1;
+            (game_controller->game_map)[i][j] = 0;
             // uart_sendc('0' + (game_controller->game_map)[i][j]);
             // uart_puts(" ");
         }
@@ -67,7 +67,7 @@ void MovePlayer(GameController *game_controller, Player *player, char input)
     int has = 0;
 
     ErasePlayer(game_controller, player);
-
+    game_controller->game_map[player->coor_y][player->coor_x] = 0;
     switch (input)
     {
     case 'w':
@@ -102,15 +102,38 @@ void MovePlayer(GameController *game_controller, Player *player, char input)
     // {
     //     uart_puts("Has moved\n");
     // }
-
+    game_controller->game_map[player->coor_y][player->coor_x] = 1;
     DrawPlayer(game_controller, player);
 }
 
-void InitEnemy(GameController *game_controller, Enemy *enemy)
+void InitEnemy(GameController *game_controller, Enemy *enemy, int position)
 {
-    enemy->coor_x = 0, enemy->coor_y = 0;
+    switch (position)
+    {
+    case 0:
+        enemy->coor_x = 0, enemy->coor_y = 0;
+        break;
+    case 1:
+        enemy->coor_x = MAP_WIDTH, enemy->coor_y = 0;
+        break;
+    case 2:
+        enemy->coor_x = MAP_WIDTH, enemy->coor_y = MAP_HEIGHT;
+        break;
+    case 3:
+        enemy->coor_x = 0, enemy->coor_y = MAP_HEIGHT;
+        break;
+    default:
+        break;
+    }
+
+    game_controller->game_map[enemy->coor_y][enemy->coor_x] = 2;
+    enemy->active = 1;
+
+
+    
     DrawEnemy(game_controller, enemy);
 }
+
 
 void DrawEnemy(GameController *game_controller, Enemy *enemy)
 {
@@ -176,13 +199,16 @@ void MoveEnemy(GameController *game_controller, Enemy *enemy, Player *player)
         
     }
     
-    if(new_x == player->coor_x && new_y == player->coor_y){
+    uart_dec(game_controller->game_map[new_y][new_x]);
+    if(game_controller->game_map[new_y][new_x] == 1 || game_controller->game_map[new_y][new_x] == 2){
         
     }else{
+        game_controller->game_map[enemy->coor_y][enemy->coor_x] = 0;
         uart_puts("moved");
         EraseEnemy(game_controller, enemy);
         enemy->coor_x = new_x;
         enemy->coor_y = new_y;
+        game_controller->game_map[enemy->coor_y][enemy->coor_x] = 2;
         DrawEnemy(game_controller, enemy);
     }
    
