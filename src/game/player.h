@@ -2,7 +2,7 @@
 #define _PLAYER_H
 
 
-#define PLAYER_SPEED 32
+#define PLAYER_SPEED 1
 #define ATTACK_DELAY 5
 
 typedef struct Player
