@@ -5,6 +5,7 @@
 #include "player.h"
 #include "game_const.h"
 #include "game_controller.h"
+#include "../time.h"
 
 void menu_stage(stage *option, stage *main)
 {
@@ -33,21 +34,30 @@ void game_stage(stage *main)
     // drawImage(0, 0, PHY_GAME_WIDTH, PHY_GAME_HEIGHT, temp_imageallArray[0]);
 
     GameController *game_controller;
-    Player *player;
+    Player player;
+    Enemy enemy;
 
     ClearGameMap(game_controller);
-    InitPlayer(game_controller, player);
+    InitPlayer(game_controller,& player);
+    InitEnemy(game_controller, &enemy);
+
+    // uart_hex(&player);
+    // uart_puts("\n");
+    // uart_hex(&enemy);
 
     while (1)
     {
-        char input = uart_getc();
+        
+        char input = getUart();
         uart_sendc(input);
         uart_puts("\n");
-
+        
         if (IsMoveInput(input))
         {
-            MovePlayer(game_controller, player, input);
+            MovePlayer(game_controller,&player, input);
         }
+        wait_msec(500000);
+        MoveEnemy(game_controller, &enemy, &player);
     }
 
     // int offset_x = 0, offset_y = 0;

@@ -75,16 +75,19 @@ char uart_getc()
 	char c;
 
 	// wait until data is ready (one symbol)
-	do
-	{
-		asm volatile("nop");
-	} while (!(AUX_MU_LSR & 0x01));
+	// do
+	// {
+	// 	asm volatile("nop");
+	// } while (!(AUX_MU_LSR & 0x01));
+	if(AUX_MU_LSR & 0x01){
+		// read it and return
+		c = (unsigned char)(AUX_MU_IO);
 
-	// read it and return
-	c = (unsigned char)(AUX_MU_IO);
-
-	// convert carriage return to newline character
-	return (c == '\r' ? '\n' : c);
+		// convert carriage return to newline character
+		return (c == '\r' ? '\n' : c);
+	}
+	return 0;
+	
 }
 
 /**
