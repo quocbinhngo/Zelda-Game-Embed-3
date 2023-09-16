@@ -4,6 +4,7 @@
 #define ENEMY_SPEED 1
 #define MOVE_DELAY 10
 #define NUM_EMEMIES 10
+#define SPAWN_TIMER 50
 
 typedef struct Enemy
 {

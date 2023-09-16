@@ -45,13 +45,7 @@ void ClearGameMap(GameController *game_controller)
     {
         for (int j = 0; j < MAP_WIDTH; j++)
         {
-<<<<<<< HEAD
-            (game_controller->game_map)[i][j] = 0;
-            // uart_sendc('0' + (game_controller->game_map)[i][j]);
-            // uart_puts(" ");
-=======
             (game_controller->game_map)[i][j] = BLANK_CODE;
->>>>>>> e223fbe58205e9d34ddaeba41ca0db18ada116ff
         }
     }
 }
@@ -74,21 +68,17 @@ void DrawPlayer(GameController *game_controller, Player *player)
 void ErasePlayer(GameController *game_controller, Player *player)
 {
     (game_controller->game_map)[player->coor_x][player->coor_y] = BLANK_CODE;
-    drawRectARGB32(player->coor_x * TILE_SIZE, player->coor_y * TILE_SIZE, player->coor_x * 32 + TILE_SIZE, player->coor_y * 32 + TILE_SIZE, 0x000, 1);
+    drawRectARGB32(player->coor_x * TILE_SIZE, player->coor_y * TILE_SIZE, player->coor_x * TILE_SIZE + TILE_SIZE, player->coor_y * TILE_SIZE + TILE_SIZE, 0x000, 1);
 }
 
 void MovePlayer(GameController *game_controller, Player *player, char input)
 {
     int has = 0;
 
-    ErasePlayer(game_controller, player);
-<<<<<<< HEAD
-    game_controller->game_map[player->coor_y][player->coor_x] = 0;
-=======
+    // ErasePlayer(game_controller, player);
 
     int new_x = player->coor_x, new_y = player->coor_y;
 
->>>>>>> e223fbe58205e9d34ddaeba41ca0db18ada116ff
     switch (input)
     {
     case 'w':
@@ -123,14 +113,6 @@ void MovePlayer(GameController *game_controller, Player *player, char input)
         break;
     }
 
-<<<<<<< HEAD
-    // if (has)
-    // {
-    //     uart_puts("Has moved\n");
-    // }
-    game_controller->game_map[player->coor_y][player->coor_x] = 1;
-    DrawPlayer(game_controller, player);
-=======
     switch ((game_controller->game_map)[new_x][new_y])
     {
     case BLANK_CODE:
@@ -149,7 +131,6 @@ void MovePlayer(GameController *game_controller, Player *player, char input)
         break;
     }
     }
->>>>>>> e223fbe58205e9d34ddaeba41ca0db18ada116ff
 }
 
 void InitEnemy(GameController *game_controller, Enemy *enemy, int position)
@@ -175,17 +156,9 @@ void InitEnemy(GameController *game_controller, Enemy *enemy, int position)
     game_controller->game_map[enemy->coor_y][enemy->coor_x] = 2;
     enemy->active = 1;
 
-
-    
     DrawEnemy(game_controller, enemy);
     AddEnemy(enemy, game_controller->enemy_list);
-
-    uart_hex(enemy);
-    uart_puts(" ");
-    uart_hex((game_controller->enemy_list->enemies[0]));
-    uart_puts("\n");
 }
-
 
 void DrawEnemy(GameController *game_controller, Enemy *enemy)
 {
@@ -205,8 +178,10 @@ void EraseEnemy(GameController *game_controller, Enemy *enemy)
     drawRectARGB32(enemy->coor_x * TILE_SIZE, enemy->coor_y * TILE_SIZE, enemy->coor_x * TILE_SIZE + TILE_SIZE, enemy->coor_y * TILE_SIZE + TILE_SIZE, 0x000, 1);
 }
 
-void MoveEnemy(GameController *game_controller, Enemy *enemy, Player *player)
+void MoveEnemy(GameController *game_controller, Enemy *enemy)
 {
+    Player *player = game_controller->player;
+
     enemy->moveCount++;
 
     if (enemy->moveCount < MOVE_DELAY)
@@ -250,19 +225,6 @@ void MoveEnemy(GameController *game_controller, Enemy *enemy, Player *player)
     {
         new_x = (direct_x > 0) ? (enemy->coor_x - ENEMY_SPEED) : (enemy->coor_x + ENEMY_SPEED);
     }
-<<<<<<< HEAD
-    
-    uart_dec(game_controller->game_map[new_y][new_x]);
-    if(game_controller->game_map[new_y][new_x] == 1 || game_controller->game_map[new_y][new_x] == 2){
-        
-    }else{
-        game_controller->game_map[enemy->coor_y][enemy->coor_x] = 0;
-        uart_puts("moved");
-        EraseEnemy(game_controller, enemy);
-        enemy->coor_x = new_x;
-        enemy->coor_y = new_y;
-        game_controller->game_map[enemy->coor_y][enemy->coor_x] = 2;
-=======
     else
     {
         // move direction y
@@ -274,8 +236,7 @@ void MoveEnemy(GameController *game_controller, Enemy *enemy, Player *player)
     case BLANK_CODE:
     {
         EraseEnemy(game_controller, enemy);
-        enemy->coor_x = new_x;
-        enemy->coor_y = new_y;
+        enemy->coor_x = new_x, enemy->coor_y = new_y;
 
         uart_puts("Enemy loc: ");
         uart_dec(enemy->coor_x);
@@ -283,7 +244,7 @@ void MoveEnemy(GameController *game_controller, Enemy *enemy, Player *player)
         uart_dec(enemy->coor_y);
         uart_puts("\n");
 
->>>>>>> e223fbe58205e9d34ddaeba41ca0db18ada116ff
+
         DrawEnemy(game_controller, enemy);
         break;
     }
@@ -370,5 +331,17 @@ void PlayerAttack(GameController *game_controller, Player *player)
         if (enemy->coor_x == attack_loc_x && enemy->coor_y == attack_loc_y)
         {
         }
+    }
+}
+
+
+void MoveEnemies(GameController *game_controller) {
+    for (int i = 0; i < game_controller->enemy_list->num_enemies; i++) {
+        Enemy* enemy = game_controller->enemy_list->enemies[i];
+        if (!enemy->active)  {
+            continue;
+        }
+
+        MoveEnemy(game_controller, enemy);
     }
 }
