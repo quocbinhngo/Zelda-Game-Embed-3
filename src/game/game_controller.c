@@ -50,29 +50,33 @@ void ClearGameMap(GameController *game_controller)
     }
 }
 
-void InitPlayer(GameController *game_controller, Player *player)
+void InitPlayer(GameController *game_controller)
 {
+    Player *player = game_controller->player;
     player->coor_x = MAP_WIDTH / 2, player->coor_y = MAP_HEIGHT / 2;
     player->dir = DOWN;
-    DrawPlayer(game_controller, player);
+    DrawPlayer(game_controller);
 
     // drawRectARGB32(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH / 2 + TILE_SIZE, GAME_HEIGHT / 2 + TILE_SIZE, 0xffffff, 1);
 }
 
-void DrawPlayer(GameController *game_controller, Player *player)
+void DrawPlayer(GameController *game_controller)
 {
+    Player *player = game_controller->player;
     (game_controller->game_map)[player->coor_x][player->coor_y] = PLAYER_CODE;
     drawImage(player->coor_x * TILE_SIZE, player->coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, player_image_allArray[player->dir]);
 }
 
-void ErasePlayer(GameController *game_controller, Player *player)
+void ErasePlayer(GameController *game_controller)
 {
+    Player *player = game_controller->player;
     (game_controller->game_map)[player->coor_x][player->coor_y] = BLANK_CODE;
     drawRectARGB32(player->coor_x * TILE_SIZE, player->coor_y * TILE_SIZE, player->coor_x * TILE_SIZE + TILE_SIZE, player->coor_y * TILE_SIZE + TILE_SIZE, 0x000, 1);
 }
 
-void MovePlayer(GameController *game_controller, Player *player, char input)
+void MovePlayer(GameController *game_controller, char input)
 {
+    Player *player = game_controller->player;
     int has = 0;
 
     // ErasePlayer(game_controller, player);
@@ -117,9 +121,9 @@ void MovePlayer(GameController *game_controller, Player *player, char input)
     {
     case BLANK_CODE:
     {
-        ErasePlayer(game_controller, player);
+        ErasePlayer(game_controller);
         player->coor_x = new_x, player->coor_y = new_y;
-        DrawPlayer(game_controller, player);
+        DrawPlayer(game_controller);
         break;
     }
     case ENEMY_CODE:
