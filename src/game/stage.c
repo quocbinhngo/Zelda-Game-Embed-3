@@ -38,8 +38,13 @@ void game_stage(stage *main)
     Enemy enemies[10];
 
     ClearGameMap(game_controller);
+<<<<<<< HEAD
     InitPlayer(game_controller,& player);
     //InitEnemy(game_controller, &enemy);
+=======
+    InitPlayer(game_controller, &player);
+    InitEnemy(game_controller, &enemy);
+>>>>>>> e223fbe58205e9d34ddaeba41ca0db18ada116ff
 
     // uart_hex(&player);
     // uart_puts("\n");
@@ -52,6 +57,7 @@ void game_stage(stage *main)
     
     while (1)
     {
+<<<<<<< HEAD
         if(spawn_timer == 50 && index < 10){
             InitEnemy(game_controller,&enemies[index],0);
             spawn_timer = 0;
@@ -59,15 +65,18 @@ void game_stage(stage *main)
         }
 
 
+=======
+>>>>>>> e223fbe58205e9d34ddaeba41ca0db18ada116ff
 
         char input = getUart();
         uart_sendc(input);
         uart_puts("\n");
-        
+
         if (IsMoveInput(input))
         {
-            MovePlayer(game_controller,&player, input);
+            MovePlayer(game_controller, &player, input);
         }
+<<<<<<< HEAD
         
         enemy_movement_timer++;
 
@@ -86,6 +95,14 @@ void game_stage(stage *main)
 
         spawn_timer++;
         wait_msec(50000);
+=======
+        else if (IsAttackInput(input))
+        {
+            PlayerAttack(game_controller, &player);
+        }
+        wait_msec(50000);
+        MoveEnemy(game_controller, &enemy, &player);
+>>>>>>> e223fbe58205e9d34ddaeba41ca0db18ada116ff
     }
 
     // int offset_x = 0, offset_y = 0;
