@@ -33,45 +33,55 @@ void game_stage(stage *main)
     // Draw map
     // drawImage(0, 0, PHY_GAME_WIDTH, PHY_GAME_HEIGHT, temp_imageallArray[0]);
 
-    GameController *game_controller;
+    GameController game_controller;
+    game_controller.enemy_list->num_enemies = 0;
+    ClearGameMap(&game_controller);
+    InitPlayer(&game_controller);
 
-    ClearGameMap(game_controller);
-    InitPlayer(game_controller);
 
-    // uart_hex(&player);
-    // uart_puts("\n");
-    // uart_hex(&enemy);
     int enemy_movement_timer = 0;
-    int spawn_timer = 50;
+    int spawn_timer = SPAWN_TIMER;
 
     int index = 0;
-
+    Enemy enemy;
+    uart_dec(game_controller.player->coor_x);
+    InitEnemy(&game_controller, &enemy, 0);
+    
     while (1)
     {
-        if (spawn_timer == SPAWN_TIMER && index < NUM_EMEMIES)
-        {
-            Enemy enemy;
-            InitEnemy(game_controller, &enemy, 0);
+        uart_puts("start loop");
+        // if (spawn_timer == SPAWN_TIMER && index < NUM_EMEMIES)
+        // {
+             
 
-            spawn_timer = 0;
-            index++;
-        }
-
+        //     spawn_timer = 0;
+        //     index++;
+        // }
+        
+        
         char input = getUart();
         uart_sendc(input);
-        uart_puts("\n");
+        
+        
 
         if (IsMoveInput(input))
         {
-            MovePlayer(game_controller, input);
+            
+            MovePlayer(&game_controller, input);
         }
         else if (IsAttackInput(input))
         {
-            PlayerAttack(game_controller);
+            PlayerAttack(&game_controller);
         }
-        MoveEnemies(game_controller);
+
+        //Enemy* enemy = *(game_controller->enemy_list->enemies);
+        //uart_hex(enemy);
+        //MoveEnemies(game_controller);
+        //MoveEnemy(game_controller, enemy);
         wait_msec(50000);
         spawn_timer++;
+        uart_puts("end loop");
+        uart_puts("\n");
     }
 }
 

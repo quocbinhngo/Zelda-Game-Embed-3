@@ -3,6 +3,7 @@
 #include "resources/enemy.h"
 #include "player.h"
 #include "../uart.h"
+#include "../framebf.h"
 
 int IsMoveInput(char c)
 {
@@ -52,83 +53,86 @@ void ClearGameMap(GameController *game_controller)
 
 void InitPlayer(GameController *game_controller)
 {
-    Player *player = game_controller->player;
-    player->coor_x = MAP_WIDTH / 2, player->coor_y = MAP_HEIGHT / 2;
-    player->dir = DOWN;
-    DrawPlayer(game_controller);
+    game_controller->player->coor_x = MAP_WIDTH/2;
+    game_controller->player->coor_y = MAP_HEIGHT/2;
 
+    game_controller->player->dir = DOWN;
+    DrawPlayer(game_controller);
     // drawRectARGB32(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH / 2 + TILE_SIZE, GAME_HEIGHT / 2 + TILE_SIZE, 0xffffff, 1);
 }
 
 void DrawPlayer(GameController *game_controller)
 {
-    Player *player = game_controller->player;
-    (game_controller->game_map)[player->coor_x][player->coor_y] = PLAYER_CODE;
-    drawImage(player->coor_x * TILE_SIZE, player->coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, player_image_allArray[player->dir]);
+    (game_controller->game_map)[game_controller->player->coor_x][game_controller->player->coor_y] = PLAYER_CODE;
+    drawImage(game_controller->player->coor_x * TILE_SIZE, game_controller->player->coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, player_image_allArray[game_controller->player->dir]);
 }
 
 void ErasePlayer(GameController *game_controller)
 {
-    Player *player = game_controller->player;
-    (game_controller->game_map)[player->coor_x][player->coor_y] = BLANK_CODE;
-    drawRectARGB32(player->coor_x * TILE_SIZE, player->coor_y * TILE_SIZE, player->coor_x * TILE_SIZE + TILE_SIZE, player->coor_y * TILE_SIZE + TILE_SIZE, 0x000, 1);
+    
+    (game_controller->game_map)[game_controller->player->coor_x][game_controller->player->coor_y] = BLANK_CODE;
+    uart_dec(game_controller->player->coor_x);
+    drawRectARGB32(game_controller->player->coor_x * TILE_SIZE, game_controller->player->coor_y * TILE_SIZE, game_controller->player->coor_x * TILE_SIZE + TILE_SIZE, game_controller->player->coor_y * TILE_SIZE + TILE_SIZE, 0x00000000, 1);
+    
 }
 
 void MovePlayer(GameController *game_controller, char input)
 {
-    Player *player = game_controller->player;
     int has = 0;
 
     // ErasePlayer(game_controller, player);
 
-    int new_x = player->coor_x, new_y = player->coor_y;
+    int new_x = game_controller->player->coor_x, new_y = game_controller->player->coor_y;
 
     switch (input)
     {
     case 'w':
     {
         has = 1;
-        new_y = (player->coor_y - PLAYER_SPEED) >= 0 ? player->coor_y - PLAYER_SPEED : 0;
-        player->dir = UP;
+        new_y = (game_controller->player->coor_y - PLAYER_SPEED) >= 0 ? game_controller->player->coor_y - PLAYER_SPEED : 0;
+        game_controller->player->dir = UP;
         break;
     }
     case 'a':
     {
         has = 1;
-        new_x = (player->coor_x - PLAYER_SPEED) >= 0 ? player->coor_x - PLAYER_SPEED : 0;
-        player->dir = LEFT;
+        new_x = (game_controller->player->coor_x - PLAYER_SPEED) >= 0 ? game_controller->player->coor_x - PLAYER_SPEED : 0;
+        game_controller->player->dir = LEFT;
         break;
     }
     case 's':
     {
         has = 1;
-        new_y = (player->coor_y + PLAYER_SPEED) < MAP_HEIGHT ? player->coor_y + PLAYER_SPEED : MAP_HEIGHT - PLAYER_SPEED;
-        player->dir = DOWN;
+        new_y = (game_controller->player->coor_y + PLAYER_SPEED) < MAP_HEIGHT ? game_controller->player->coor_y + PLAYER_SPEED : MAP_HEIGHT - PLAYER_SPEED;
+        game_controller->player->dir = DOWN;
         break;
     }
     case 'd':
     {
         has = 1;
-        new_x = (player->coor_x + PLAYER_SPEED) < MAP_WIDTH ? player->coor_x + PLAYER_SPEED : MAP_WIDTH - PLAYER_SPEED;
-        player->dir = RIGHT;
+        new_x = (game_controller->player->coor_x + PLAYER_SPEED) < MAP_WIDTH ? game_controller->player->coor_x + PLAYER_SPEED : MAP_WIDTH - PLAYER_SPEED;
+        game_controller->player->dir = RIGHT;
         break;
     }
     default:
         break;
     }
-
+    
     switch ((game_controller->game_map)[new_x][new_y])
     {
     case BLANK_CODE:
     {
+        
         ErasePlayer(game_controller);
-        player->coor_x = new_x, player->coor_y = new_y;
+        uart_puts("here");
+        game_controller->player->coor_x = new_x, game_controller->player->coor_y = new_y;
+        uart_puts("here");
         DrawPlayer(game_controller);
         break;
     }
     case ENEMY_CODE:
     {
-        EnemyAttack(game_controller, player);
+        EnemyAttack(game_controller, game_controller->player);
     }
     default:
     {
@@ -139,6 +143,10 @@ void MovePlayer(GameController *game_controller, char input)
 
 void InitEnemy(GameController *game_controller, Enemy *enemy, int position)
 {
+    uart_puts("init");
+    //uart_hex(game_controller);
+    uart_dec(game_controller->player->coor_x);
+    uart_puts("1\n");
     switch (position)
     {
     case 0:
@@ -156,12 +164,23 @@ void InitEnemy(GameController *game_controller, Enemy *enemy, int position)
     default:
         break;
     }
-
+    uart_dec(game_controller->player->coor_x);
+    uart_puts("2\n");
     game_controller->game_map[enemy->coor_y][enemy->coor_x] = 2;
     enemy->active = 1;
-
+    uart_dec(game_controller->player->coor_x);
+    uart_puts("3\n");
     DrawEnemy(game_controller, enemy);
+    uart_dec(game_controller->player->coor_x);
+    uart_puts("4\n");
+    uart_dec(game_controller->enemy_list->num_enemies);   
+    uart_puts("5\n");
     AddEnemy(enemy, game_controller->enemy_list);
+    uart_dec(game_controller->enemy_list->num_enemies);   
+    uart_puts("6\n");
+    //uart_hex(game_controller);
+    uart_dec(game_controller->player->coor_x);
+    uart_puts("7\n");
 }
 
 void DrawEnemy(GameController *game_controller, Enemy *enemy)
@@ -184,8 +203,8 @@ void EraseEnemy(GameController *game_controller, Enemy *enemy)
 
 void MoveEnemy(GameController *game_controller, Enemy *enemy)
 {
-    Player *player = game_controller->player;
-
+    
+    uart_hex(enemy);
     enemy->moveCount++;
 
     if (enemy->moveCount < MOVE_DELAY)
@@ -199,25 +218,25 @@ void MoveEnemy(GameController *game_controller, Enemy *enemy)
     int diff_x, diff_y;
     int direct_x, direct_y;
 
-    if (player->coor_x < enemy->coor_x)
+    if (game_controller->player->coor_x < enemy->coor_x)
     {
-        diff_x = enemy->coor_x - player->coor_x;
+        diff_x = enemy->coor_x - game_controller->player->coor_x;
         direct_x = 1;
     }
     else
     {
-        diff_x = player->coor_x - enemy->coor_x;
+        diff_x = game_controller->player->coor_x - enemy->coor_x;
         direct_x = -1;
     }
 
-    if (player->coor_y < enemy->coor_y)
+    if (game_controller->player->coor_y < enemy->coor_y)
     {
-        diff_y = enemy->coor_y - player->coor_y;
+        diff_y = enemy->coor_y - game_controller->player->coor_y;
         direct_y = 1;
     }
     else
     {
-        diff_y = player->coor_y - enemy->coor_y;
+        diff_y = game_controller->player->coor_y - enemy->coor_y;
         direct_y = -1;
     }
 
@@ -254,7 +273,7 @@ void MoveEnemy(GameController *game_controller, Enemy *enemy)
     }
     case PLAYER_CODE:
     {
-        EnemyAttack(game_controller, player);
+        EnemyAttack(game_controller, game_controller->player);
         break;
     }
     default:
@@ -262,14 +281,16 @@ void MoveEnemy(GameController *game_controller, Enemy *enemy)
         break;
     }
     }
+    return;
 }
 
 void EnemyAttack(GameController *game_controller, Player *player)
 {
 }
 
-void PlayerAttack(GameController *game_controller, Player *player)
+void PlayerAttack(GameController *game_controller)
 {
+    Player *player = game_controller->player;
     int attack_loc_x = player->coor_x, attack_loc_y = player->coor_y;
 
     switch (player->dir)
@@ -341,11 +362,17 @@ void PlayerAttack(GameController *game_controller, Player *player)
 
 void MoveEnemies(GameController *game_controller) {
     for (int i = 0; i < game_controller->enemy_list->num_enemies; i++) {
-        Enemy* enemy = game_controller->enemy_list->enemies[i];
+        uart_puts("\n");
+        uart_puts("i = ");
+        uart_dec(i);
+        uart_puts("\n");
+        Enemy* enemy = *((game_controller->enemy_list->enemies)+i);
         if (!enemy->active)  {
             continue;
         }
-
+        uart_hex(enemy);
+        uart_puts("\n");
         MoveEnemy(game_controller, enemy);
     }
+    return;
 }
