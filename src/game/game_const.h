@@ -11,8 +11,6 @@
 #define MAP_WIDTH (GAME_WIDTH / TILE_SIZE)
 #define MAP_HEIGHT (GAME_HEIGHT / TILE_SIZE)
 
-
-
 // int game_map[MAP_HEIGHT][MAP_WIDTH];
 
 #endif
