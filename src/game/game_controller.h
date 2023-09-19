@@ -25,10 +25,8 @@ int IsAttackInput(char c);
 void InitPlayer(GameController *game_controller);
 void DrawPlayer(GameController *game_controller);
 void MovePlayer(GameController *game_controller, char input);
-
 void PlayerAttack(GameController *GameController);
 void InitEnemy(GameController *game_controller, Enemy *enemy, int position);
-
 void DrawEnemy(GameController *game_controller, Enemy *enemy);
 void EraseEnemy(GameController *game_controller, Enemy *enemy);
 void MoveEnemy(GameController *game_controller, Enemy *enemy);
