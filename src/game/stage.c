@@ -34,17 +34,12 @@ void game_stage(stage *main)
     // drawImage(0, 0, PHY_GAME_WIDTH, PHY_GAME_HEIGHT, temp_imageallArray[0]);
 
     GameController *game_controller;
-    Player player;
-    Enemy enemies[10];
 
     ClearGameMap(game_controller);
-<<<<<<< HEAD
-    InitPlayer(game_controller,& player);
+
+    InitPlayer(game_controller);
     //InitEnemy(game_controller, &enemy);
-=======
-    InitPlayer(game_controller, &player);
-    InitEnemy(game_controller, &enemy);
->>>>>>> e223fbe58205e9d34ddaeba41ca0db18ada116ff
+
 
     // uart_hex(&player);
     // uart_puts("\n");
@@ -57,16 +52,7 @@ void game_stage(stage *main)
     
     while (1)
     {
-<<<<<<< HEAD
-        if(spawn_timer == 50 && index < 10){
-            InitEnemy(game_controller,&enemies[index],0);
-            spawn_timer = 0;
-            index++;
-        }
 
-
-=======
->>>>>>> e223fbe58205e9d34ddaeba41ca0db18ada116ff
 
         char input = getUart();
         uart_sendc(input);
@@ -74,35 +60,16 @@ void game_stage(stage *main)
 
         if (IsMoveInput(input))
         {
-            MovePlayer(game_controller, &player, input);
-        }
-<<<<<<< HEAD
-        
-        enemy_movement_timer++;
-
-        if(enemy_movement_timer == 10){
-            for(int i = 0; i < 10; i++){
-                if(enemies[i].active == 1){
-                    MoveEnemy(game_controller,&enemies[i],&player);
-                }
-            }
-            // MoveEnemy(game_controller, &enemies[0], &player);
-            // MoveEnemy(game_controller, &enemies[1], &player);
-            enemy_movement_timer = 0;
+            MovePlayer(game_controller, input);
         }
 
-        
-
-        spawn_timer++;
-        wait_msec(50000);
-=======
         else if (IsAttackInput(input))
         {
-            PlayerAttack(game_controller, &player);
+            PlayerAttack(game_controller);
         }
         wait_msec(50000);
-        MoveEnemy(game_controller, &enemy, &player);
->>>>>>> e223fbe58205e9d34ddaeba41ca0db18ada116ff
+        //MoveEnemy(game_controller, &enemy, &player);
+
     }
 
     // int offset_x = 0, offset_y = 0;
