@@ -56,6 +56,7 @@ void InitPlayer(GameController *game_controller)
 
     player.coor_x = MAP_WIDTH / 2, player.coor_y = MAP_HEIGHT / 2;
     player.dir = DOWN;
+    player.hp = MAX_HP;
 
     game_controller->player = player;
     DrawPlayer(game_controller);
@@ -133,6 +134,7 @@ void MovePlayer(GameController *game_controller, char input)
     }
     case ENEMY_CODE:
     {
+        DrawPlayer(game_controller);
         EnemyAttack(game_controller);
     }
     default:
@@ -172,7 +174,6 @@ void InitEnemy(GameController *game_controller, int position)
 
 void DrawEnemy(GameController *game_controller, Enemy *enemy)
 {
-    
     (game_controller->game_map)[enemy->coor_x][enemy->coor_y] = ENEMY_CODE;
     drawImage(enemy->coor_x * TILE_SIZE, enemy->coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, enemy_image_1);
 
@@ -254,7 +255,6 @@ void MoveEnemy(GameController *game_controller, Enemy *enemy)
         uart_puts(" ");
         uart_dec(enemy->coor_y);
         uart_puts("\n");
-
 
         DrawEnemy(game_controller, enemy);
         break;
@@ -342,6 +342,8 @@ void PlayerAttack(GameController *game_controller)
 
         if (enemy->coor_x == attack_loc_x && enemy->coor_y == attack_loc_y)
         {
+            game_controller->enemy_list.enemies[i].active = 0;
+            EraseEnemy(game_controller, enemy);
         }
     }
 }
