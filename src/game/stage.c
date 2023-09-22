@@ -30,13 +30,12 @@ void menu_stage(stage *option, stage *main)
 
 void game_stage(stage *main)
 {
-    GameController game_controller_obj;
-    GameController *game_controller = &game_controller_obj;
+     GameController game_controller_obj;
+     GameController *game_controller = &game_controller_obj;
 
-    ClearGameMap(game_controller);
-    InitPlayer(game_controller);
+    StartGame(game_controller);
 
-    
+
     int enemy_movement_timer = 0;
     int spawn_timer = 50;
 
@@ -45,18 +44,28 @@ void game_stage(stage *main)
     while (1)
     {
 
+        char input = getUart();
+        uart_sendc(input);
+        uart_puts("\n");
+
+        if (!game_controller->is_game_active && IsExitGameInput(input))
+        {
+            //
+        }
+
+        if (!game_controller->is_game_active)
+        {
+            continue;
+        }
+
         if (spawn_timer == SPAWN_TIMER && index < NUM_EMEMIES)
         {
-            
-            InitEnemy(game_controller,0);
+
+            InitEnemy(game_controller, 0);
 
             spawn_timer = 0;
             index++;
         }
-
-        char input = getUart();
-        uart_sendc(input);
-        uart_puts("\n");
 
         if (IsMoveInput(input))
         {
@@ -67,7 +76,7 @@ void game_stage(stage *main)
             PlayerAttack(game_controller);
         }
 
-        //MoveEnemy(game_controller, &game_controller->enemy_list.enemies[0]);
+        // MoveEnemy(game_controller, &game_controller->enemy_list.enemies[0]);
         MoveEnemies(game_controller);
         wait_msec(50000);
         spawn_timer++;

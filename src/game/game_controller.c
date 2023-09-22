@@ -1,5 +1,6 @@
 #include "game_controller.h"
 #include "resources/player.h"
+#include "resources/player_attack.h"
 #include "resources/enemy.h"
 #include "player.h"
 #include "../uart.h"
@@ -39,7 +40,15 @@ int IsAttackInput(char c)
     }
 }
 
-void ClearGameMap(GameController *game_controller)
+int IsExitGameInput(char key) {return key == ' ';}
+
+void StartGame( GameController *game_controller){
+    game_controller->is_game_active = 1;
+        ClearGameMap(game_controller);
+    InitPlayer(game_controller);
+}
+
+void ClearGameMap( GameController *game_controller)
 {
     for (int i = 0; i < MAP_HEIGHT; i++)
     {
@@ -50,7 +59,7 @@ void ClearGameMap(GameController *game_controller)
     }
 }
 
-void InitPlayer(GameController *game_controller)
+void InitPlayer( GameController *game_controller)
 {
     Player player;
 
@@ -59,28 +68,42 @@ void InitPlayer(GameController *game_controller)
     player.hp = MAX_HP;
 
     game_controller->player = player;
-    DrawPlayer(game_controller);
+    DrawPlayer(game_controller, NORMAL_MODE);
 
 
     // drawRectARGB32(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH / 2 + TILE_SIZE, GAME_HEIGHT / 2 + TILE_SIZE, 0xffffff, 1);
 }
 
-void DrawPlayer(GameController *game_controller)
+void DrawPlayer( GameController *game_controller, int player_mode)
 {
     
     //Player* player = game_controller->player;
     (game_controller->game_map)[game_controller->player.coor_x][game_controller->player.coor_y] = PLAYER_CODE;
-    drawImage(game_controller->player.coor_x * TILE_SIZE, game_controller->player.coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, player_image_allArray[game_controller->player.dir]);
+
+    switch (player_mode)
+    {
+        case NORMAL_MODE: {
+            drawImage(game_controller->player.coor_x * TILE_SIZE, game_controller->player.coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, player_image_allArray[game_controller->player.dir]);
+         break;
+
+        } case ATTACK_MODE : {
+            drawImage(game_controller->player.coor_x * TILE_SIZE, game_controller->player.coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, player_image_attack_allArray[game_controller->player.dir]);
+break;
+        }
+    
+    default:
+      {  break;}
+    }
 }
 
-void ErasePlayer(GameController *game_controller)
+void ErasePlayer( GameController *game_controller)
 {
     //Player* player = game_controller->player;
     (game_controller->game_map)[game_controller->player.coor_x][game_controller->player.coor_y] = BLANK_CODE;
     drawRectARGB32(game_controller->player.coor_x * TILE_SIZE, game_controller->player.coor_y * TILE_SIZE, game_controller->player.coor_x * TILE_SIZE + TILE_SIZE, game_controller->player.coor_y * TILE_SIZE + TILE_SIZE, 0x000, 1);
 }
 
-void MovePlayer(GameController *game_controller, char input)
+void MovePlayer( GameController *game_controller, char input)
 {
     Player* player = &game_controller->player;
     int has = 0;
@@ -129,14 +152,13 @@ void MovePlayer(GameController *game_controller, char input)
     {
         ErasePlayer(game_controller);
         player->coor_x = new_x, player->coor_y = new_y;
-        DrawPlayer(game_controller);
+        DrawPlayer(game_controller, NORMAL_MODE);
         break;
     }
     case ENEMY_CODE:
     {
-        DrawPlayer(game_controller);
-        EnemyAttack(game_controller);
-    }
+        DrawPlayer(game_controller,  NORMAL_MODE);
+        EnemyAttack(game_controller); }
     default:
     {
         break;
@@ -144,7 +166,7 @@ void MovePlayer(GameController *game_controller, char input)
     }
 }
 
-void InitEnemy(GameController *game_controller, int position)
+void InitEnemy( GameController *game_controller, int position)
 {
     Enemy enemy;
     switch (position)
@@ -172,7 +194,7 @@ void InitEnemy(GameController *game_controller, int position)
     AddEnemy(&enemy, &game_controller->enemy_list);
 }
 
-void DrawEnemy(GameController *game_controller, Enemy *enemy)
+void DrawEnemy( GameController *game_controller, Enemy *enemy)
 {
     (game_controller->game_map)[enemy->coor_x][enemy->coor_y] = ENEMY_CODE;
     drawImage(enemy->coor_x * TILE_SIZE, enemy->coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, enemy_image_1);
@@ -183,14 +205,14 @@ void DrawEnemy(GameController *game_controller, Enemy *enemy)
     uart_puts("\n");
 }
 
-void EraseEnemy(GameController *game_controller, Enemy *enemy)
+void EraseEnemy( GameController *game_controller, Enemy *enemy)
 {
     (game_controller->game_map)[enemy->coor_x][enemy->coor_y] = BLANK_CODE;
 
     drawRectARGB32(enemy->coor_x * TILE_SIZE, enemy->coor_y * TILE_SIZE, enemy->coor_x * TILE_SIZE + TILE_SIZE, enemy->coor_y * TILE_SIZE + TILE_SIZE, 0x000, 1);
 }
 
-void MoveEnemy(GameController *game_controller, Enemy *enemy)
+void MoveEnemy( GameController *game_controller, Enemy *enemy)
 {
     Player *player = &game_controller->player;
 
@@ -271,14 +293,31 @@ void MoveEnemy(GameController *game_controller, Enemy *enemy)
     }
 }
 
-void EnemyAttack(GameController *game_controller)
+void EnemyAttack( GameController *game_controller)
 {
+    Player *player = &game_controller->player;
+    player->hp -= 10;
+    uart_puts("\nCurrent player health: ");
+    uart_dec(player->hp);
+    uart_puts("\n");
+    
+    if (player->hp > 0){
+        return;
+    }
+
+
+        game_controller->game_map[player->coor_x][player->coor_y] = BLANK_CODE;
+        game_controller->is_game_active = 0;
+        ErasePlayer(game_controller);
 }
 
-void PlayerAttack(GameController *game_controller)
+void PlayerAttack( GameController *game_controller)
 {
     Player* player = &game_controller->player;
     int attack_loc_x = player->coor_x, attack_loc_y = player->coor_y;
+
+    ErasePlayer(game_controller);
+    DrawPlayer(game_controller, ATTACK_MODE);
 
     switch (player->dir)
     {
@@ -302,6 +341,7 @@ void PlayerAttack(GameController *game_controller)
     }
     case DOWN:
     {
+        
         if (attack_loc_y + 1 >= MAP_HEIGHT)
         {
             return;
@@ -346,10 +386,18 @@ void PlayerAttack(GameController *game_controller)
             EraseEnemy(game_controller, enemy);
         }
     }
+
+// cancel danh animation
+    // for (int i = 0; i < 1e9; i++) {
+    // }
+
+    // ErasePlayer(game_controller);
+    // DrawPlayer(game_controller, NORMAL_MODE);
+
 }
 
 
-void MoveEnemies(GameController *game_controller) {
+void MoveEnemies( GameController *game_controller) {
     for (int i = 0; i < game_controller->enemy_list.num_enemies; i++) {
         Enemy* enemy = &game_controller->enemy_list.enemies[i];
         if (!enemy->active)  {
