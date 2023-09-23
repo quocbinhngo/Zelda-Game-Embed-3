@@ -7,6 +7,6 @@
 #define SCREEN_HEIGHT 400
 
 void image_mode();
-void display_image(const unsigned long **image, int image_len);
+void display_image(const unsigned long *image);
 
-#endif 
+#endif
