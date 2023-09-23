@@ -17,6 +17,8 @@ typedef struct GameController
     int game_map[MAP_HEIGHT][MAP_WIDTH], is_game_active;
     EnemyList enemy_list;
     Player player;
+
+    int weapon_x, weapon_y;
 } GameController;
 // struct GameController
 // {
@@ -50,4 +52,6 @@ void InitEnemy( GameController *game_controller, int position);
 void MoveEnemies(GameController *game_controller);
 // void InitEnemy(GameController *game_controller, Enemy *enemy);
 
+void DrawWeapon(GameController *game_controller);
+void EraseWeapon(GameController *GameController);
 #endif

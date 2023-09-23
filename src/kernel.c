@@ -16,9 +16,9 @@ void main()
     // image_mode();
     // stringFont(0, 0, "Tran Duc Linh", 0xafbec1);
 
-    // game_mode();
+    game_mode();
 
-    image_mode();
+    // image_mode();
 
     // framebf_init(500, 500, 600, 600);
     // drawRectARGB32(0, 0, 499, 499, 0x00AABBCC, 1);
