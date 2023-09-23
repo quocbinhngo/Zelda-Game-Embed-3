@@ -16,10 +16,27 @@ void main()
     // image_mode();
     // stringFont(0, 0, "Tran Duc Linh", 0xafbec1);
 
-    
-    game_mode();
+    // game_mode();
 
-    // image_mode();
+    image_mode();
+
+    // framebf_init(500, 500, 600, 600);
+    // drawRectARGB32(0, 0, 499, 499, 0x00AABBCC, 1);
+    // drawRectARGB32(600, 0, 600 + 499, 499, 0x00FF0000, 1);
+
+    // int x_offset = 0;
+
+    // while (1)
+    // {
+    //     char c = getUart();
+    //     if (c == 'd')
+    //     {
+    //         x_offset = x_offset + 5;
+    //         mbox_buffer_setup(ADDR(mBuf), MBOX_TAG_SETVIRTOFF, 2, x_offset, 0);
+    //         break;
+    //     }
+    // }
+    // drawRectARGB32(0, 0, 499, 499, 0x00FF0000, 1);
 
     // display_image(image_allArray[0]);
 

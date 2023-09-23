@@ -83,7 +83,6 @@ int mbox_call(unsigned int buffer_addr, unsigned char channel)
  * Function for setup mbox
  */
 void mbox_buffer_setup(unsigned int buffer_addr, unsigned int tag_identifier,
-                       unsigned int **res_data, unsigned int res_length,
                        unsigned int req_length, ...)
 {
 
@@ -112,11 +111,6 @@ void mbox_buffer_setup(unsigned int buffer_addr, unsigned int tag_identifier,
 
     if (mbox_call(buffer_addr, MBOX_CH_PROP)) // If calling the request is success
     {
-        // Store the response data to `res_data`
-        for (int i = 0; i < res_length; i++)
-        {
-            res_data[i] = mb[5 + i];
-        }
     }
     else // If calling the request is failed
     {

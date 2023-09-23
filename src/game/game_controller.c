@@ -87,7 +87,7 @@ void DrawPlayer( GameController *game_controller, int player_mode)
          break;
 
         } case ATTACK_MODE : {
-            drawImage(game_controller->player.coor_x * TILE_SIZE, game_controller->player.coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, player_image_attack_allArray[game_controller->player.dir]);
+            drawImage(game_controller->player.coor_x * TILE_SIZE, game_controller->player.coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, player_attack_image_allArray[game_controller->player.dir]);
 break;
         }
     
