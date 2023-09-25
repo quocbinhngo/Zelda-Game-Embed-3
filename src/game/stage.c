@@ -209,7 +209,6 @@ void setting_stage(stage *option, stage *main, int *map)
 
 void menu_stage(stage *option, stage *main, int *diff, int *map)
 {
-    char *levelStr;
     DrawMap(*map);
 
     stringFont(275, 40, "Menu Screen, Level: ", PRIMARY_COLOR, LARGE_FONT);
@@ -391,20 +390,26 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
 
     if (*start_game)
     {
-        StartGame(game_controller, *map);
+        StartGame(game_controller, map);
         *start_game = 0;
     }
     else
     {
-        ResumeGame(game_controller, *map);
+        ResumeGame(game_controller, map);
     }
 
-    int enemy_movement_timer = 0;
     int spawn_timer = 0;
     int enemy_cnt = 0;
+    int print_map_cnt = 0;
 
     while (1)
     {
+
+        if (print_map_cnt == 50)
+        {
+            PrintGameMap(game_controller);
+            print_map_cnt = 0;
+        }
 
         char input = getUart();
 
@@ -458,6 +463,7 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
         DrawScore(game_controller);
         wait_msec(50000);
         spawn_timer++;
+        print_map_cnt++;
     }
 }
 
@@ -520,7 +526,7 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
 //     mbox_buffer_setup(mBuf, MBOX_TAG_SETVIRTOFF, res_data, 0, 2, offset_x, offset_y);
 // }
 
-void pause_stage(stage *main, stage *map, int *start_game)
+void pause_stage(stage *main, int *map, int *start_game)
 {
     DrawMap(*map);
     stringFont(500, 40, "PAUSE GAME", PRIMARY_COLOR, LARGE_FONT);

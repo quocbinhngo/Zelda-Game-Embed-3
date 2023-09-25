@@ -7,7 +7,7 @@
 #define SMALL_FONT 0
 #define LARGE_FONT 1
 
-void assignArray(int *des, int fontIndex);
+void assignArray(unsigned int des[8], int fontIndex);
 
 // function to count the how many pixel required by a character
 int countSpaces(char character);

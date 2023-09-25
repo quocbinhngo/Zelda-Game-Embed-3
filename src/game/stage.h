@@ -19,6 +19,6 @@ void diff_stage(stage *option, stage *main, int *diff, int *map);
 void menu_stage(stage *option, stage *main, int *diff, int *map);
 void game_stage(stage *main, GameController *game_controller, int *diff, int *map, int * start_game);
 void map_stage(stage *option, stage *main, int *map);
-void pause_stage(stage *main, stage *map, int *start_game);
+void pause_stage(stage *main, int *map, int *start_game);
 
 #endif

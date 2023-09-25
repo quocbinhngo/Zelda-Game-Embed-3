@@ -6,6 +6,7 @@
 #include "../uart.h"
 #include "game.h"
 #include "game_controller.h"
+#include "../framebf.h"
 
 // #define VIR_GAME_WIDTH 1280
 // #define VIR_GAME_HEIGHT 720
@@ -22,7 +23,6 @@ void game_mode()
     stage option = GAME;
 
     int cont_loop = 1;
-    int map_state = GRASS_MAP;
     int diff = 0, map = 0;
 
     GameController game_controller_obj;
