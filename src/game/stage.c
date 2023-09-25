@@ -70,6 +70,39 @@ void update_setting_stage(stage *option)
     }
 }
 
+void update_map_stage(stage *option)
+{
+    draw_button(100, "Grass", 0);
+    draw_button(300, "Ice", 0);
+    draw_button(500, "Dungeon", 0);
+
+    switch (*option)
+    {
+    case GAME:
+    {
+        uart_puts("grass");
+        draw_button(100, "GRASS", 1);
+        break;
+    }
+    case SETTING:
+    {
+        uart_puts("ice");
+        draw_button(300, "ICE", 1);
+        break;
+    }
+    case EXIT:
+    {
+        uart_puts("dungeon");
+        draw_button(500, "DUNGEON", 1);
+    }
+    default:
+    {
+        uart_puts("default");
+        break;
+    }
+    }
+}
+
 void setting_stage(stage *option, stage *main, int *map_state)
 {
     DrawMap(*map_state);
@@ -117,12 +150,12 @@ void setting_stage(stage *option, stage *main, int *map_state)
         }
     }
 
-    DrawMap();
+    DrawMap(*map_state);
 }
 
-void menu_stage(stage *option, stage *main)
+void menu_stage(stage *option, stage *main, int *map_state)
 {
-    DrawMap();
+    DrawMap(*map_state);
     update_menu_stage(option);
     int cont_loop = 1;
 
@@ -166,7 +199,56 @@ void menu_stage(stage *option, stage *main)
         }
     }
 
-    DrawMap();
+    DrawMap(*map_state);
+}
+
+void map_stage(stage *option, stage *main, int *map_state)
+{
+    DrawMap(*map_state);
+    update_map_stage(option);
+    int cont_loop = 1;
+
+    stage choices[] = {GAME, SETTING, EXIT};
+    int choice_index = 0;
+
+    while (cont_loop)
+    {
+        char key = getUart();
+
+        stage previous = *option;
+
+        switch (key)
+        {
+        case 'w':
+        {
+            choice_index = (choice_index - 1 + 3) % 3;
+            break;
+        }
+        case 's':
+        {
+            choice_index = (choice_index + 1) % 3;
+            break;
+        }
+        case '\n':
+        {
+            *main = *option;
+            cont_loop = 0;
+            break;
+        }
+        default:
+        {
+            break;
+        }
+        }
+
+        *option = choices[choice_index];
+        if (*option != previous)
+        {
+            update_map_stage(option);
+        }
+    }
+
+    DrawMap(*map_state);
 }
 
 void game_stage(stage *main)

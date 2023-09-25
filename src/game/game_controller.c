@@ -108,7 +108,7 @@ void ErasePlayer(GameController *game_controller)
 {
     // Player* player = game_controller->player;
     (game_controller->game_map)[game_controller->player.coor_x][game_controller->player.coor_y] = BLANK_CODE;
-    ReDrawMap(game_controller->player.coor_x, game_controller->player.coor_y);
+    ReDrawMap(game_controller->player.coor_x, game_controller->player.coor_y, game_controller->map);
 }
 
 void MovePlayer(GameController *game_controller, char input)
@@ -220,7 +220,7 @@ void EraseEnemy(GameController *game_controller, Enemy *enemy)
 {
     (game_controller->game_map)[enemy->coor_x][enemy->coor_y] = BLANK_CODE;
 
-    ReDrawMap(enemy->coor_x, enemy->coor_y);
+    ReDrawMap(enemy->coor_x, enemy->coor_y, game_controller->map);
 }
 
 void MoveEnemy(GameController *game_controller, Enemy *enemy)
@@ -435,7 +435,7 @@ void DrawWeapon(GameController *game_controller)
 
 void EraseWeapon(GameController *game_controller)
 {
-    ReDrawMap(game_controller->weapon_x, game_controller->weapon_y);
+    ReDrawMap(game_controller->weapon_x, game_controller->weapon_y, game_controller->map);
 }
 
 void DrawHealthBar(GameController *game_controller)
@@ -445,24 +445,24 @@ void DrawHealthBar(GameController *game_controller)
     drawRectARGB32(20, GAME_HEIGHT - 30, game_controller->player.hp * 2 + 20, GAME_HEIGHT - 10, 0x00FF0000, 1);
 }
 
-void DrawMap()
+void DrawMap(int map_state)
 {
     for (int y = 0; y < GAME_HEIGHT; y++)
     {
         for (int x = 0; x < GAME_WIDTH; x++)
         {
-            drawPixelARGB32(x, y, game_background_image_Tiling_Grass_Texture_23x16_Green_Dense[y * GAME_WIDTH + x]);
+            drawPixelARGB32(x, y, game_background_image_allArray[map_state][y * GAME_WIDTH + x]);
         }
     }
 }
 
-void ReDrawMap(int x_coordinate, int y_coordinate)
+void ReDrawMap(int x_coordinate, int y_coordinate, int map_state)
 {
     for (int y_pixel = y_coordinate * TILE_SIZE; y_pixel < y_coordinate * TILE_SIZE + TILE_SIZE; y_pixel++)
     {
         for (int x_pixel = x_coordinate * TILE_SIZE; x_pixel < x_coordinate * TILE_SIZE + TILE_SIZE; x_pixel++)
         {
-            drawPixelARGB32(x_pixel, y_pixel, game_background_image_Tiling_Grass_Texture_23x16_Green_Dense[y_pixel * GAME_WIDTH + x_pixel]);
+            drawPixelARGB32(x_pixel, y_pixel, game_background_image_allArray[map_state][y_pixel * GAME_WIDTH + x_pixel]);
         }
     }
 }

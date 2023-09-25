@@ -30,14 +30,15 @@ void game_mode()
         case MENU:
         {
             // uart_puts("fdsfsd\n");
-            menu_stage(&option, &cur_stage);
+            menu_stage(&option, &cur_stage, &map_state);
             break;
         }
         case SETTING:
         {
             setting_stage(&option, &cur_stage, &map_state);
             break;
-        }  case MAP: {
+        }  
+        case MAP: {
             map_stage(&option, &cur_stage, &map_state);
         }
         case GAME:
