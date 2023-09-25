@@ -43,14 +43,28 @@ int IsAttackInput(char c)
     }
 }
 
-int IsExitGameInput(char key) { return key == ' '; }
+int IsExitGameInput(char key) { return key == 'j'; }
+
+int IsPauseInput(char c)
+{
+    // escape key
+    return c == 27;
+}
 
 void StartGame(GameController *game_controller, int *map)
 {
     game_controller->is_game_active = 1;
     game_controller->map = map;
+
     ClearGameMap(game_controller);
     InitPlayer(game_controller);
+
+    game_controller->enemy_list.num_enemies = 0;
+}
+
+void ResumeGame(GameController *game_controller, int *map)
+{
+    DrawPlayer(game_controller, NORMAL_MODE);
 }
 
 void ClearGameMap(GameController *game_controller)

@@ -29,11 +29,13 @@ typedef struct GameController
 // } ;
 
 void StartGame(GameController *game_controller, int *map);
+void ResumeGame(GameController *game_controller, int *map);
 void ClearGameMap(GameController *game_controller);
 
 int IsMoveInput(char c);
 int IsAttackInput(char c);
 int IsExitGameInput(char c);
+int IsPauseInput(char c);
 
 void InitPlayer(GameController *game_controller);
 void DrawPlayer(GameController *game_controller, int player_mode);
