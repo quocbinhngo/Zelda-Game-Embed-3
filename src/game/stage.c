@@ -413,7 +413,7 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
 
         char input = getUart();
 
-        if (!game_controller->is_game_active)
+        if (!game_controller->is_game_active) 
         {
             break;
         }
