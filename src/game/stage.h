@@ -6,6 +6,7 @@ typedef enum
 	MENU,
 	SETTING,
 	GAME,
+	EXIT,
 	RESULT,
 	PAUSE,
 	PLAYER,

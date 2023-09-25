@@ -9,6 +9,6 @@
 #define BUTTON_PADDING_X 50
 #define BUTTON_PADDING_Y 20
 
-void draw_button(int offsetY, char *string);
+void draw_button(int offsetY, char *string, int is_primary);
 
 #endif

@@ -8,35 +8,92 @@
 #include "../time.h"
 #include "ui.h"
 
+void update_menu_stage(stage *option)
+{
+    draw_button(100, "Start", 0);
+    draw_button(300, "Settings", 0);
+    draw_button(500, "Exit", 0);
 
+    switch (*option)
+    {
+    case GAME:
+    {
+        uart_puts("menu");
+        draw_button(100, "START", 1);
+        break;
+    }
+    case SETTING:
+    {
+        uart_puts("setting");
+        draw_button(300, "SETTING", 1);
+        break;
+    }
+    case EXIT:
+    {
+        uart_puts("exit");
+        draw_button(500, "EXIT", 1);
+    }
+    default:
+    {
+        uart_puts("default");
+        break;
+    }
+    }
+}
 
 void menu_stage(stage *option, stage *main)
 {
-    
-    draw_button(100, "Start");
-    draw_button(300, "Options");
 
-    while (1)
+    update_menu_stage(option);
+    int cont_loop = 1;
+
+    stage choices[] = {GAME, SETTING, EXIT};
+    int choice_index = 0;
+
+    while (cont_loop)
     {
         char key = getUart();
 
-        if (key == ' ')
+        stage previous = *option;
+
+        switch (key)
+        {
+        case 'w':
+        {
+            choice_index = (choice_index - 1 + 3) % 3;
+            break;
+        }
+        case 's':
+        {
+            choice_index = (choice_index + 1) % 3;
+            break;
+        }
+        case '\n':
         {
             *main = *option;
-            return;
+            cont_loop = 0;
+            break;
+        }
+        default:
+        {
+            break;
+        }
+        }
+
+        *option = choices[choice_index];
+        if (*option != previous)
+        {
+            update_menu_stage(option);
         }
     }
 }
 
-
-
 void game_stage(stage *main)
 {
-     GameController game_controller_obj;
-     GameController *game_controller = &game_controller_obj;
+    GameController game_controller_obj;
+    GameController *game_controller = &game_controller_obj;
 
     StartGame(game_controller);
-
 
     int enemy_movement_timer = 0;
     int spawn_timer = 50;
@@ -80,11 +137,10 @@ void game_stage(stage *main)
 
         // MoveEnemy(game_controller, &game_controller->enemy_list.enemies[0]);
         MoveEnemies(game_controller);
-        
+
         DrawHealthBar(game_controller);
         wait_msec(50000);
         spawn_timer++;
-        
     }
 }
 

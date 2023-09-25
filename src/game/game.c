@@ -19,9 +19,10 @@ void game_mode()
     stage cur_stage = MENU;
     stage option = GAME;
 
-    while (1)
-    {
+    int cont_loop = 1;
 
+    while (cont_loop)
+    {
         switch (cur_stage)
         {
         case MENU:
@@ -30,11 +31,24 @@ void game_mode()
             menu_stage(&option, &cur_stage);
             break;
         }
+        case SETTING:
+        {
+        }
         case GAME:
         {
             game_stage(&cur_stage);
             break;
         }
+        case EXIT:
+        {
+            cont_loop = 0;
+            break;
+        }
+        default:
+        {
+            break;
+        }
         }
     }
+
 }
