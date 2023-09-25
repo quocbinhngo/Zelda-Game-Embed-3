@@ -41,9 +41,88 @@ void update_menu_stage(stage *option)
     }
 }
 
+void update_setting_stage(stage *option)
+{
+    draw_button(100, "Difficulty", 0);
+    draw_button(300, "Map background", 0);
+    draw_button(500, "Home", 0);
+
+    switch (*option)
+    {
+    case GAME:
+    {
+        draw_button(100, "DIFFICULTY", 1);
+        break;
+    }
+    case SETTING:
+    {
+        draw_button(300, "MAP BACKGROUND", 1);
+        break;
+    }
+    case EXIT:
+    {
+        draw_button(500, "HOME", 1);
+    }
+    default:
+    {
+        break;
+    }
+    }
+}
+
+void setting_stage(stage *option, stage *main, int *map_state)
+{
+    DrawMap(*map_state);
+    update_setting_stage(option);
+    int cont_loop = 1;
+
+    stage choices[] = {DIFF, MAP, MENU};
+    int choice_index = 0;
+    *option = DIFF;
+
+    while (cont_loop)
+    {
+        char key = getUart();
+
+        stage previous = *option;
+
+        switch (key)
+        {
+        case 'w':
+        {
+            choice_index = (choice_index - 1 + 3) % 3;
+            break;
+        }
+        case 's':
+        {
+            choice_index = (choice_index + 1) % 3;
+            break;
+        }
+        case '\n':
+        {
+            *main = *option;
+            cont_loop = 0;
+            break;
+        }
+        default:
+        {
+            break;
+        }
+        }
+
+        *option = choices[choice_index];
+        if (*option != previous)
+        {
+            update_setting_stage(option);
+        }
+    }
+
+    DrawMap();
+}
+
 void menu_stage(stage *option, stage *main)
 {
-
+    DrawMap();
     update_menu_stage(option);
     int cont_loop = 1;
 
@@ -86,6 +165,8 @@ void menu_stage(stage *option, stage *main)
             update_menu_stage(option);
         }
     }
+
+    DrawMap();
 }
 
 void game_stage(stage *main)
@@ -93,7 +174,7 @@ void game_stage(stage *main)
     GameController game_controller_obj;
     GameController *game_controller = &game_controller_obj;
 
-    DrawMap(game_controller);
+    DrawMap();
 
     StartGame(game_controller);
 
@@ -104,7 +185,7 @@ void game_stage(stage *main)
 
     while (1)
     {
-       
+
         char input = getUart();
         uart_sendc(input);
         uart_puts("\n");

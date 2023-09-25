@@ -7,13 +7,11 @@ typedef enum
 	SETTING,
 	GAME,
 	EXIT,
-	RESULT,
-	PAUSE,
-	PLAYER,
 	DIFF,
-	HOWTO
+	MAP
 } stage;
 
+void setting_stage(stage *option, stage *main);
 void menu_stage(stage *option, stage *main);
 void game_stage(stage *main);
 
