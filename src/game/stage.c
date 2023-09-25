@@ -10,28 +10,25 @@
 
 void update_menu_stage(stage *option)
 {
-    draw_button(100, "Start", 0);
-    draw_button(300, "Settings", 0);
+    draw_button(200, "Start", 0);
+    draw_button(350, "Settings", 0);
     draw_button(500, "Exit", 0);
 
     switch (*option)
     {
     case GAME:
     {
-        uart_puts("menu");
-        draw_button(100, "START", 1);
+        draw_button(200, "Start", 1);
         break;
     }
     case SETTING:
     {
-        uart_puts("setting");
-        draw_button(300, "SETTING", 1);
+        draw_button(350, "Settings", 1);
         break;
     }
     case EXIT:
     {
-        uart_puts("exit");
-        draw_button(500, "EXIT", 1);
+        draw_button(500, "Exit", 1);
     }
     default:
     {
@@ -43,25 +40,25 @@ void update_menu_stage(stage *option)
 
 void update_diff_stage(int *diff)
 {
-    draw_button(100, "Easy", 0);
-    draw_button(300, "Medium", 0);
+    draw_button(200, "Easy", 0);
+    draw_button(350, "Medium", 0);
     draw_button(500, "Hard", 0);
 
     switch (*diff)
     {
-    case GAME:
+    case 0:
     {
-        draw_button(100, "EASY", 1);
+        draw_button(200, "Easy", 1);
         break;
     }
-    case SETTING:
+    case 1:
     {
-        draw_button(300, "MEDIUM", 1);
+        draw_button(350, "Medium", 1);
         break;
     }
-    case EXIT:
+    case 2:
     {
-        draw_button(500, "HARD", 1);
+        draw_button(500, "Hard", 1);
         break;
     }
     default:
@@ -73,20 +70,20 @@ void update_diff_stage(int *diff)
 
 void update_setting_stage(stage *option)
 {
-    draw_button(100, "Difficulty", 0);
-    draw_button(300, "Map background", 0);
+    draw_button(200, "Difficulty", 0);
+    draw_button(350, "Map background", 0);
     draw_button(500, "Home", 0);
 
     switch (*option)
     {
     case DIFF:
     {
-        draw_button(100, "DIFFICULTY", 1);
+        draw_button(200, "DIFFICULTY", 1);
         break;
     }
     case MAP:
     {
-        draw_button(300, "MAP BACKGROUND", 1);
+        draw_button(350, "MAP BACKGROUND", 1);
         break;
     }
     case MENU:
@@ -155,9 +152,43 @@ void setting_stage(stage *option, stage *main)
     DrawMap();
 }
 
-void menu_stage(stage *option, stage *main)
+void menu_stage(stage *option, stage *main, int *diff)
 {
+    char *levelStr;
+
+    for (int i = 0; i < 10; i++)
+    {
+        uart_sendc(levelStr[i]);
+    }
+    uart_sendc('\n');
+
     DrawMap();
+
+    stringFont(500, 40, "Level: ", BUTTON_PRIMARY_COLOR, LARGE_FONT);
+
+    switch (*diff)
+    {
+    case 0:
+    {
+        stringFont(700, 40, "Easy", BUTTON_PRIMARY_COLOR, LARGE_FONT);
+        break;
+    }
+    case 1:
+    {
+        stringFont(700, 40, "Medium", BUTTON_PRIMARY_COLOR, LARGE_FONT);
+        break;
+    }
+    case 2:
+    {
+        stringFont(700, 40, "Hard", BUTTON_PRIMARY_COLOR, LARGE_FONT);
+        break;
+    }
+    default:
+    {
+        break;
+    }
+    }
+
     update_menu_stage(option);
     int cont_loop = 1;
 
@@ -200,15 +231,14 @@ void menu_stage(stage *option, stage *main)
             update_menu_stage(option);
         }
     }
-
-    DrawMap();
 }
 
 void diff_stage(stage *option, stage *main, int *diff)
 {
     DrawMap();
-    update_diff_stage(diff);
     int cont_loop = 1;
+
+    update_diff_stage(diff);
 
     while (cont_loop)
     {
@@ -231,6 +261,7 @@ void diff_stage(stage *option, stage *main, int *diff)
         case '\n':
         {
             cont_loop = 0;
+            *main = MENU;
             break;
         }
         default:
@@ -248,10 +279,15 @@ void diff_stage(stage *option, stage *main, int *diff)
     DrawMap();
 }
 
-void game_stage(stage *main)
+void game_stage(stage *main, int *diff)
 {
     GameController game_controller_obj;
+    game_controller_obj.diff = diff;
     GameController *game_controller = &game_controller_obj;
+
+    uart_puts("Diff level: ");
+    uart_dec(diff);
+    uart_puts("\n");
 
     DrawMap();
 
@@ -271,7 +307,6 @@ void game_stage(stage *main)
 
         if (!game_controller->is_game_active && IsExitGameInput(input))
         {
-            //
         }
 
         if (!game_controller->is_game_active)
@@ -279,7 +314,7 @@ void game_stage(stage *main)
             continue;
         }
 
-        if (spawn_timer == SPAWN_TIMER && index < NUM_EMEMIES)
+        if (spawn_timer == (SPAWN_TIMER / (*diff + 1)) && index < NUM_EMEMIES)
         {
 
             InitEnemy(game_controller, 0);

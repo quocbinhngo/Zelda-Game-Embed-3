@@ -13,7 +13,7 @@ typedef enum
 
 void setting_stage(stage *option, stage *main);
 void diff_stage(stage *option, stage *main, int *diff);
-void menu_stage(stage *option, stage *main);
-void game_stage(stage *main);
+void menu_stage(stage *option, stage *main, int *diff);
+void game_stage(stage *main, int *diff);
 
 #endif

@@ -31,7 +31,7 @@ void game_mode()
         case MENU:
         {
             // uart_puts("fdsfsd\n");
-            menu_stage(&option, &cur_stage);
+            menu_stage(&option, &cur_stage, &diff);
             break;
         }
         case SETTING:
@@ -51,7 +51,7 @@ void game_mode()
         }
         case GAME:
         {
-            game_stage(&cur_stage);
+            game_stage(&cur_stage, &diff);
             break;
         }
         case EXIT:

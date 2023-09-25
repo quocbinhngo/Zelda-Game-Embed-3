@@ -229,7 +229,7 @@ void MoveEnemy(GameController *game_controller, Enemy *enemy)
 
     enemy->moveCount++;
 
-    if (enemy->moveCount < MOVE_DELAY)
+    if (enemy->moveCount < (MOVE_DELAY / (game_controller->diff + 1)))
     {
         return;
     }

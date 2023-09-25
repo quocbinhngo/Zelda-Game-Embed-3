@@ -19,7 +19,7 @@ typedef struct GameController
     Player player;
 
     int weapon_x, weapon_y;
-    int score;
+    int score, diff;
 } GameController;
 // struct GameController
 // {
