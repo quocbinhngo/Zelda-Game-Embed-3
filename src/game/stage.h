@@ -11,9 +11,10 @@ typedef enum
 	MAP
 } stage;
 
-void setting_stage(stage *option, stage *main, int *map_state);
-void menu_stage(stage *option, stage *main, int *map_state);
-void game_stage(stage *main);
-void map_stage(stage *option, stage *main, int *map_state);
+void setting_stage(stage *option, stage *main, int *map);
+void diff_stage(stage *option, stage *main, int *diff, int *map);
+void menu_stage(stage *option, stage *main, int *map);
+void game_stage(stage *main, int *map);
+void map_stage(stage *option, stage *main, int *map);
 
 #endif

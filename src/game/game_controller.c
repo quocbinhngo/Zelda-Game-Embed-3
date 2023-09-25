@@ -45,9 +45,10 @@ int IsAttackInput(char c)
 
 int IsExitGameInput(char key) { return key == ' '; }
 
-void StartGame(GameController *game_controller)
+void StartGame(GameController *game_controller, int *map)
 {
     game_controller->is_game_active = 1;
+    game_controller->map = map;
     ClearGameMap(game_controller);
     InitPlayer(game_controller);
 }

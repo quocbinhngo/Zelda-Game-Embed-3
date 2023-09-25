@@ -22,6 +22,7 @@ void game_mode()
 
     int cont_loop = 1;
     int map_state = GRASS_MAP;
+    int diff = 0, map = 0;
 
     while (cont_loop)
     {
@@ -30,20 +31,28 @@ void game_mode()
         case MENU:
         {
             // uart_puts("fdsfsd\n");
-            menu_stage(&option, &cur_stage, &map_state);
+            menu_stage(&option, &cur_stage, &map);
             break;
         }
         case SETTING:
         {
-            setting_stage(&option, &cur_stage, &map_state);
+            setting_stage(&option, &cur_stage, &map);
             break;
+        }
+        case DIFF:
+        {
+            diff_stage(&option, &cur_stage, &diff, &map);
+            break;
+
         }  
         case MAP: {
-            map_stage(&option, &cur_stage, &map_state);
+            map_stage(&option, &cur_stage, &map);
+            cur_stage = MENU;
+            break;
         }
         case GAME:
         {
-            game_stage(&cur_stage);
+            game_stage(&cur_stage, &map);
             break;
         }
         case EXIT:

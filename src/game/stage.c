@@ -41,6 +41,36 @@ void update_menu_stage(stage *option)
     }
 }
 
+void update_diff_stage(int *diff)
+{
+    draw_button(100, "Easy", 0);
+    draw_button(300, "Medium", 0);
+    draw_button(500, "Hard", 0);
+
+    switch (*diff)
+    {
+    case GAME:
+    {
+        draw_button(100, "EASY", 1);
+        break;
+    }
+    case SETTING:
+    {
+        draw_button(300, "MEDIUM", 1);
+        break;
+    }
+    case EXIT:
+    {
+        draw_button(500, "HARD", 1);
+        break;
+    }
+    default:
+    {
+        break;
+    }
+    }
+}
+
 void update_setting_stage(stage *option)
 {
     draw_button(100, "Difficulty", 0);
@@ -49,19 +79,20 @@ void update_setting_stage(stage *option)
 
     switch (*option)
     {
-    case GAME:
+    case DIFF:
     {
         draw_button(100, "DIFFICULTY", 1);
         break;
     }
-    case SETTING:
+    case MAP:
     {
         draw_button(300, "MAP BACKGROUND", 1);
         break;
     }
-    case EXIT:
+    case MENU:
     {
         draw_button(500, "HOME", 1);
+        break;
     }
     default:
     {
@@ -73,27 +104,28 @@ void update_setting_stage(stage *option)
 void update_map_stage(stage *option)
 {
     draw_button(100, "Grass", 0);
-    draw_button(300, "Ice", 0);
+    draw_button(300, "Desert", 0);
     draw_button(500, "Dungeon", 0);
 
     switch (*option)
     {
-    case GAME:
+    case 0:
     {
         uart_puts("grass");
         draw_button(100, "GRASS", 1);
         break;
     }
-    case SETTING:
+    case 1:
     {
-        uart_puts("ice");
-        draw_button(300, "ICE", 1);
+        uart_puts("desert");
+        draw_button(300, "DESERT", 1);
         break;
     }
-    case EXIT:
+    case 2:
     {
         uart_puts("dungeon");
         draw_button(500, "DUNGEON", 1);
+        break;
     }
     default:
     {
@@ -103,15 +135,16 @@ void update_map_stage(stage *option)
     }
 }
 
-void setting_stage(stage *option, stage *main, int *map_state)
+void setting_stage(stage *option, stage *main, int *map)
 {
-    DrawMap(*map_state);
-    update_setting_stage(option);
+    DrawMap(*map);
     int cont_loop = 1;
 
     stage choices[] = {DIFF, MAP, MENU};
     int choice_index = 0;
     *option = DIFF;
+
+    update_setting_stage(option);
 
     while (cont_loop)
     {
@@ -143,19 +176,22 @@ void setting_stage(stage *option, stage *main, int *map_state)
         }
         }
 
-        *option = choices[choice_index];
-        if (*option != previous)
+        if (cont_loop)
         {
-            update_setting_stage(option);
+            *option = choices[choice_index];
+            if (*option != previous)
+            {
+                update_setting_stage(option);
+            }
         }
     }
 
-    DrawMap(*map_state);
+    DrawMap(*map);
 }
 
-void menu_stage(stage *option, stage *main, int *map_state)
+void menu_stage(stage *option, stage *main, int *map)
 {
-    DrawMap(*map_state);
+    DrawMap(*map);
     update_menu_stage(option);
     int cont_loop = 1;
 
@@ -199,16 +235,16 @@ void menu_stage(stage *option, stage *main, int *map_state)
         }
     }
 
-    DrawMap(*map_state);
+    DrawMap(*map);
 }
 
-void map_stage(stage *option, stage *main, int *map_state)
+void map_stage(stage *option, stage *main, int *map)
 {
-    DrawMap(*map_state);
+    DrawMap(*map);
     update_map_stage(option);
     int cont_loop = 1;
 
-    stage choices[] = {GAME, SETTING, EXIT};
+    stage choices[] = {0, 1, 2};
     int choice_index = 0;
 
     while (cont_loop)
@@ -231,7 +267,7 @@ void map_stage(stage *option, stage *main, int *map_state)
         }
         case '\n':
         {
-            *main = *option;
+            *map = *option;
             cont_loop = 0;
             break;
         }
@@ -248,17 +284,61 @@ void map_stage(stage *option, stage *main, int *map_state)
         }
     }
 
-    DrawMap(*map_state);
+    DrawMap(*map);
 }
 
-void game_stage(stage *main)
+void diff_stage(stage *option, stage *main, int *diff, int *map)
+{
+    DrawMap(*map);
+    update_diff_stage(diff);
+    int cont_loop = 1;
+
+    while (cont_loop)
+    {
+        char key = getUart();
+
+        int previous = *diff;
+
+        switch (key)
+        {
+        case 'w':
+        {
+            *diff = (*diff - 1 + 3) % 3;
+            break;
+        }
+        case 's':
+        {
+            *diff = (*diff + 1) % 3;
+            break;
+        }
+        case '\n':
+        {
+            cont_loop = 0;
+            break;
+        }
+        default:
+        {
+            break;
+        }
+        }
+
+        if (*diff != previous)
+        {
+            update_diff_stage(diff);
+        }
+    }
+
+    DrawMap(*map);
+}
+
+void game_stage(stage *main, int *map)
 {
     GameController game_controller_obj;
     GameController *game_controller = &game_controller_obj;
 
-    DrawMap();
+    DrawMap(*map);
 
-    StartGame(game_controller);
+    StartGame(game_controller, *map);
 
     int enemy_movement_timer = 0;
     int spawn_timer = 50;
