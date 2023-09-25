@@ -12,6 +12,7 @@ typedef enum
 } stage;
 
 void setting_stage(stage *option, stage *main);
+void diff_stage(stage *option, stage *main, int *diff);
 void menu_stage(stage *option, stage *main);
 void game_stage(stage *main);
 

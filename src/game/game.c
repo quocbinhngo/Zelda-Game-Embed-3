@@ -22,6 +22,7 @@ void game_mode()
 
     int cont_loop = 1;
     int map_state = GRASS_MAP;
+    int diff = 0;
 
     while (cont_loop)
     {
@@ -35,10 +36,18 @@ void game_mode()
         }
         case SETTING:
         {
-            setting_stage(&option, &cur_stage, &map_state);
+            setting_stage(&option, &cur_stage);
             break;
-        }  case MAP: {
-            map_stage(&option, &cur_stage, &map_state);
+        }
+        case MAP:
+        {
+            // map_stage(&option, &cur_stage, &map_state);
+            break;
+        }
+        case DIFF:
+        {
+            diff_stage(&option, &cur_stage, &diff);
+            break;
         }
         case GAME:
         {

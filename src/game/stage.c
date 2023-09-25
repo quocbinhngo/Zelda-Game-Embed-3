@@ -41,27 +41,28 @@ void update_menu_stage(stage *option)
     }
 }
 
-void update_setting_stage(stage *option)
+void update_diff_stage(int *diff)
 {
-    draw_button(100, "Difficulty", 0);
-    draw_button(300, "Map background", 0);
-    draw_button(500, "Home", 0);
+    draw_button(100, "Easy", 0);
+    draw_button(300, "Medium", 0);
+    draw_button(500, "Hard", 0);
 
-    switch (*option)
+    switch (*diff)
     {
     case GAME:
     {
-        draw_button(100, "DIFFICULTY", 1);
+        draw_button(100, "EASY", 1);
         break;
     }
     case SETTING:
     {
-        draw_button(300, "MAP BACKGROUND", 1);
+        draw_button(300, "MEDIUM", 1);
         break;
     }
     case EXIT:
     {
-        draw_button(500, "HOME", 1);
+        draw_button(500, "HARD", 1);
+        break;
     }
     default:
     {
@@ -70,15 +71,46 @@ void update_setting_stage(stage *option)
     }
 }
 
-void setting_stage(stage *option, stage *main, int *map_state)
+void update_setting_stage(stage *option)
 {
-    DrawMap(*map_state);
-    update_setting_stage(option);
+    draw_button(100, "Difficulty", 0);
+    draw_button(300, "Map background", 0);
+    draw_button(500, "Home", 0);
+
+    switch (*option)
+    {
+    case DIFF:
+    {
+        draw_button(100, "DIFFICULTY", 1);
+        break;
+    }
+    case MAP:
+    {
+        draw_button(300, "MAP BACKGROUND", 1);
+        break;
+    }
+    case MENU:
+    {
+        draw_button(500, "HOME", 1);
+        break;
+    }
+    default:
+    {
+        break;
+    }
+    }
+}
+
+void setting_stage(stage *option, stage *main)
+{
+    DrawMap();
     int cont_loop = 1;
 
     stage choices[] = {DIFF, MAP, MENU};
     int choice_index = 0;
     *option = DIFF;
+
+    update_setting_stage(option);
 
     while (cont_loop)
     {
@@ -110,10 +142,13 @@ void setting_stage(stage *option, stage *main, int *map_state)
         }
         }
 
-        *option = choices[choice_index];
-        if (*option != previous)
+        if (cont_loop)
         {
-            update_setting_stage(option);
+            *option = choices[choice_index];
+            if (*option != previous)
+            {
+                update_setting_stage(option);
+            }
         }
     }
 
@@ -163,6 +198,50 @@ void menu_stage(stage *option, stage *main)
         if (*option != previous)
         {
             update_menu_stage(option);
+        }
+    }
+
+    DrawMap();
+}
+
+void diff_stage(stage *option, stage *main, int *diff)
+{
+    DrawMap();
+    update_diff_stage(diff);
+    int cont_loop = 1;
+
+    while (cont_loop)
+    {
+        char key = getUart();
+
+        int previous = *diff;
+
+        switch (key)
+        {
+        case 'w':
+        {
+            *diff = (*diff - 1 + 3) % 3;
+            break;
+        }
+        case 's':
+        {
+            *diff = (*diff + 1) % 3;
+            break;
+        }
+        case '\n':
+        {
+            cont_loop = 0;
+            break;
+        }
+        default:
+        {
+            break;
+        }
+        }
+
+        if (*diff != previous)
+        {
+            update_diff_stage(diff);
         }
     }
 
