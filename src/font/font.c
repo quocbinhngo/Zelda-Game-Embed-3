@@ -204,10 +204,10 @@ int countSpaces(char character)
 }
 
 // function to draw the character on screen at pixel coordinate (x,y) with text color
-void drawCharacterFont(int x, int y, char charater, unsigned int color)
+void drawCharacterFont(int x, int y, char character, unsigned int color)
 {
     unsigned int a[8];
-    int charIndex = charater - 33;
+    int charIndex = character - 33;
 
     assignArray(&a, charIndex * 8);
 

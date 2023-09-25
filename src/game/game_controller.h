@@ -19,6 +19,7 @@ typedef struct GameController
     Player player;
 
     int weapon_x, weapon_y;
+    int score;
 } GameController;
 // struct GameController
 // {
@@ -26,7 +27,6 @@ typedef struct GameController
 //     EnemyList enemy_list;
 //     Player player;
 // } ;
-
 
 void StartGame(GameController *game_controller);
 void ClearGameMap(GameController *game_controller);
@@ -47,8 +47,8 @@ void PlayerAttack(GameController *GameController);
 void DrawEnemy(GameController *game_controller, Enemy *enemy);
 void EraseEnemy(GameController *game_controller, Enemy *enemy);
 void MoveEnemy(GameController *game_controller, Enemy *enemy);
-void EnemyAttack( GameController *game_controller);
-void InitEnemy( GameController *game_controller, int position);
+void EnemyAttack(GameController *game_controller);
+void InitEnemy(GameController *game_controller, int position);
 void MoveEnemies(GameController *game_controller);
 // void InitEnemy(GameController *game_controller, Enemy *enemy);
 
@@ -58,4 +58,5 @@ void EraseWeapon(GameController *GameController);
 void DrawHealthBar(GameController *game_controller);
 void DrawMap();
 void ReDrawMap(int x_coordinate, int y_coordinate);
+void DrawScore(GameController *game_controller);
 #endif

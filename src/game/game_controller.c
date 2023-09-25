@@ -6,6 +6,7 @@
 #include "resources/weapon.h"
 #include "player.h"
 #include "../uart.h"
+#include "../font/font.h"
 
 int IsMoveInput(char c)
 {
@@ -53,6 +54,7 @@ void StartGame(GameController *game_controller)
 
 void ClearGameMap(GameController *game_controller)
 {
+    game_controller->score = 0;
     for (int i = 0; i < MAP_HEIGHT; i++)
     {
         for (int j = 0; j < MAP_WIDTH; j++)
@@ -158,7 +160,7 @@ void MovePlayer(GameController *game_controller, char input)
     {
         ErasePlayer(game_controller);
         EraseWeapon(game_controller);
-        
+
         player->coor_x = new_x, player->coor_y = new_y;
         DrawPlayer(game_controller, NORMAL_MODE);
         break;
@@ -218,7 +220,7 @@ void EraseEnemy(GameController *game_controller, Enemy *enemy)
 {
     (game_controller->game_map)[enemy->coor_x][enemy->coor_y] = BLANK_CODE;
 
-    ReDrawMap(enemy->coor_x , enemy->coor_y);
+    ReDrawMap(enemy->coor_x, enemy->coor_y);
 }
 
 void MoveEnemy(GameController *game_controller, Enemy *enemy)
@@ -395,6 +397,10 @@ void PlayerAttack(GameController *game_controller)
         {
             game_controller->enemy_list.enemies[i].active = 0;
             EraseEnemy(game_controller, enemy);
+            game_controller->score++;
+            uart_puts("\nCurrent score: ");
+            uart_dec(game_controller->score);
+            uart_puts("\n");
         }
     }
 
@@ -429,32 +435,58 @@ void DrawWeapon(GameController *game_controller)
 
 void EraseWeapon(GameController *game_controller)
 {
-    // Player* player = game_controller->player;
-    drawRectARGB32(game_controller->weapon_x * TILE_SIZE, game_controller->weapon_y * TILE_SIZE, game_controller->weapon_x * TILE_SIZE + TILE_SIZE, game_controller->weapon_y * TILE_SIZE + TILE_SIZE, 0x000, 1);
+    ReDrawMap(game_controller->weapon_x, game_controller->weapon_y);
 }
 
-
-void DrawHealthBar(GameController *game_controller){
-    drawRectARGB32(17, GAME_HEIGHT - 33, 223, GAME_HEIGHT - 7, 0xb9c4bc,1 );
-    drawRectARGB32(20, GAME_HEIGHT - 30, 220, GAME_HEIGHT - 10, 0x00000000 , 1);
-    drawRectARGB32(20, GAME_HEIGHT - 30, game_controller->player.hp*2 + 20, GAME_HEIGHT - 10, 0x00FF0000 , 1);
+void DrawHealthBar(GameController *game_controller)
+{
+    drawRectARGB32(17, GAME_HEIGHT - 33, 223, GAME_HEIGHT - 7, 0xb9c4bc, 1);
+    drawRectARGB32(20, GAME_HEIGHT - 30, 220, GAME_HEIGHT - 10, 0x00000000, 1);
+    drawRectARGB32(20, GAME_HEIGHT - 30, game_controller->player.hp * 2 + 20, GAME_HEIGHT - 10, 0x00FF0000, 1);
 }
 
-void DrawMap(){
-    for(int y = 0; y < GAME_HEIGHT; y++){
-        for(int x = 0; x < GAME_WIDTH; x++){
-            drawPixelARGB32(x, y, game_background_image_Tiling_Grass_Texture_23x16_Green_Dense[y*GAME_WIDTH+x]);
+void DrawMap()
+{
+    for (int y = 0; y < GAME_HEIGHT; y++)
+    {
+        for (int x = 0; x < GAME_WIDTH; x++)
+        {
+            drawPixelARGB32(x, y, game_background_image_Tiling_Grass_Texture_23x16_Green_Dense[y * GAME_WIDTH + x]);
         }
-
     }
 }
 
-
-void ReDrawMap(int x_coordinate, int y_coordinate){
-    for(int y_pixel = y_coordinate*TILE_SIZE; y_pixel < y_coordinate*TILE_SIZE+TILE_SIZE; y_pixel++){
-        for(int x_pixel = x_coordinate*TILE_SIZE; x_pixel < x_coordinate*TILE_SIZE+TILE_SIZE; x_pixel++){
-            drawPixelARGB32(x_pixel, y_pixel, game_background_image_Tiling_Grass_Texture_23x16_Green_Dense[y_pixel*GAME_WIDTH+x_pixel]);
+void ReDrawMap(int x_coordinate, int y_coordinate)
+{
+    for (int y_pixel = y_coordinate * TILE_SIZE; y_pixel < y_coordinate * TILE_SIZE + TILE_SIZE; y_pixel++)
+    {
+        for (int x_pixel = x_coordinate * TILE_SIZE; x_pixel < x_coordinate * TILE_SIZE + TILE_SIZE; x_pixel++)
+        {
+            drawPixelARGB32(x_pixel, y_pixel, game_background_image_Tiling_Grass_Texture_23x16_Green_Dense[y_pixel * GAME_WIDTH + x_pixel]);
         }
-
     }
+}
+
+void DrawScore(GameController *game_controller)
+{
+    char temp_buffer[5], score[5];
+    int currentScore = game_controller->score, i = 4, j = 0;
+    // uart_dec(currentScore);
+    do
+    {
+        temp_buffer[i] = (currentScore % 10) + '0';
+        // uart_sendc(temp_buffer[i]);
+        i--;
+        currentScore /= 10;
+    } while (currentScore != 0);
+    for (i = i + 1; i < 5; i++)
+    {
+        score[j] = temp_buffer[i];
+        j++;
+    }
+    score[j] = 0;
+    // uart_puts(score);
+    drawRectARGB32(GAME_WIDTH / 2 + 25, TILE_SIZE, GAME_WIDTH / 2 + 50, TILE_SIZE + 10, 0x00000000, 1);
+    stringFont(GAME_WIDTH / 2 - 25, TILE_SIZE, "Score: ", 0x00ffffff, SMALL_FONT);
+    stringFont(GAME_WIDTH / 2 + 25, TILE_SIZE, score, 0x00ffffff, SMALL_FONT);
 }
