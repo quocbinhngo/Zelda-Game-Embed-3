@@ -19,6 +19,7 @@ typedef struct GameController
     Player player;
 
     int weapon_x, weapon_y;
+    int score;
 } GameController;
 // struct GameController
 // {
@@ -56,4 +57,5 @@ void DrawWeapon(GameController *game_controller);
 void EraseWeapon(GameController *GameController);
 
 void DrawHealthBar(GameController *game_controller);
+void DrawScore(GameController *game_controller);
 #endif

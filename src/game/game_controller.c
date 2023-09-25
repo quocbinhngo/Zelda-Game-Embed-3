@@ -5,6 +5,7 @@
 #include "resources/weapon.h"
 #include "player.h"
 #include "../uart.h"
+#include "../font/font.h"
 
 int IsMoveInput(char c)
 {
@@ -52,6 +53,7 @@ void StartGame(GameController *game_controller)
 
 void ClearGameMap(GameController *game_controller)
 {
+    game_controller->score = 0;
     for (int i = 0; i < MAP_HEIGHT; i++)
     {
         for (int j = 0; j < MAP_WIDTH; j++)
@@ -393,6 +395,10 @@ void PlayerAttack(GameController *game_controller)
         {
             game_controller->enemy_list.enemies[i].active = 0;
             EraseEnemy(game_controller, enemy);
+            game_controller->score++;
+            uart_puts("\nCurrent score: ");
+            uart_dec(game_controller->score);
+            uart_puts("\n");
         }
     }
 
@@ -436,4 +442,27 @@ void DrawHealthBar(GameController *game_controller){
     drawRectARGB32(17, GAME_HEIGHT - 33, 223, GAME_HEIGHT - 7, 0xb9c4bc,1 );
     drawRectARGB32(20, GAME_HEIGHT - 30, 220, GAME_HEIGHT - 10, 0x00000000 , 1);
     drawRectARGB32(20, GAME_HEIGHT - 30, game_controller->player.hp*2 + 20, GAME_HEIGHT - 10, 0x00FF0000 , 1);
+}
+
+void DrawScore(GameController *game_controller){
+    char temp_buffer[5], score[5];
+    int currentScore = game_controller->score, i = 4, j = 0;
+    //uart_dec(currentScore);
+    do
+    {
+        temp_buffer[i] =  (currentScore % 10) + '0';
+        //uart_sendc(temp_buffer[i]);
+        i--;
+        currentScore /= 10;
+    } while (currentScore != 0);
+    for (i = i + 1; i < 5; i++)
+    {
+        score[j] = temp_buffer[i];
+        j++;
+    }
+    score[j] = 0;
+    //uart_puts(score);
+    drawRectARGB32(GAME_WIDTH/2 + 25, TILE_SIZE, GAME_WIDTH/2 + 50, TILE_SIZE + 10, 0x00000000, 1);
+    stringFont(GAME_WIDTH/2 - 25, TILE_SIZE, "Score: ", 0x00ffffff);
+    stringFont(GAME_WIDTH/2 + 25, TILE_SIZE, score, 0x00ffffff);
 }

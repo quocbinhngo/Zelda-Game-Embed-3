@@ -80,6 +80,7 @@ void game_stage(stage *main)
         MoveEnemies(game_controller);
         
         DrawHealthBar(game_controller);
+        DrawScore(game_controller);
         wait_msec(50000);
         spawn_timer++;
         
