@@ -54,4 +54,6 @@ void MoveEnemies(GameController *game_controller);
 
 void DrawWeapon(GameController *game_controller);
 void EraseWeapon(GameController *GameController);
+
+void DrawHealthBar(GameController *game_controller);
 #endif

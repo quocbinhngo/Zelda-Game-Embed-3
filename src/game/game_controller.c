@@ -430,3 +430,10 @@ void EraseWeapon(GameController *game_controller)
     // Player* player = game_controller->player;
     drawRectARGB32(game_controller->weapon_x * TILE_SIZE, game_controller->weapon_y * TILE_SIZE, game_controller->weapon_x * TILE_SIZE + TILE_SIZE, game_controller->weapon_y * TILE_SIZE + TILE_SIZE, 0x000, 1);
 }
+
+
+void DrawHealthBar(GameController *game_controller){
+    drawRectARGB32(17, GAME_HEIGHT - 33, 223, GAME_HEIGHT - 7, 0xb9c4bc,1 );
+    drawRectARGB32(20, GAME_HEIGHT - 30, 220, GAME_HEIGHT - 10, 0x00000000 , 1);
+    drawRectARGB32(20, GAME_HEIGHT - 30, game_controller->player.hp*2 + 20, GAME_HEIGHT - 10, 0x00FF0000 , 1);
+}
