@@ -93,6 +93,8 @@ void game_stage(stage *main)
     GameController game_controller_obj;
     GameController *game_controller = &game_controller_obj;
 
+    DrawMap(game_controller);
+
     StartGame(game_controller);
 
     int enemy_movement_timer = 0;
@@ -102,7 +104,7 @@ void game_stage(stage *main)
 
     while (1)
     {
-
+       
         char input = getUart();
         uart_sendc(input);
         uart_puts("\n");

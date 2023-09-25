@@ -56,4 +56,6 @@ void DrawWeapon(GameController *game_controller);
 void EraseWeapon(GameController *GameController);
 
 void DrawHealthBar(GameController *game_controller);
+void DrawMap();
+void ReDrawMap(int x_coordinate, int y_coordinate);
 #endif

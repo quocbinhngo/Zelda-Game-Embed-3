@@ -1,6 +1,7 @@
 #include "game_controller.h"
 #include "resources/player.h"
 #include "resources/player_attack.h"
+#include "resources/game_background.h"
 #include "resources/enemy.h"
 #include "resources/weapon.h"
 #include "player.h"
@@ -105,7 +106,7 @@ void ErasePlayer(GameController *game_controller)
 {
     // Player* player = game_controller->player;
     (game_controller->game_map)[game_controller->player.coor_x][game_controller->player.coor_y] = BLANK_CODE;
-    drawRectARGB32(game_controller->player.coor_x * TILE_SIZE, game_controller->player.coor_y * TILE_SIZE, game_controller->player.coor_x * TILE_SIZE + TILE_SIZE, game_controller->player.coor_y * TILE_SIZE + TILE_SIZE, 0x000, 1);
+    ReDrawMap(game_controller->player.coor_x, game_controller->player.coor_y);
 }
 
 void MovePlayer(GameController *game_controller, char input)
@@ -157,6 +158,7 @@ void MovePlayer(GameController *game_controller, char input)
     {
         ErasePlayer(game_controller);
         EraseWeapon(game_controller);
+        
         player->coor_x = new_x, player->coor_y = new_y;
         DrawPlayer(game_controller, NORMAL_MODE);
         break;
@@ -216,7 +218,7 @@ void EraseEnemy(GameController *game_controller, Enemy *enemy)
 {
     (game_controller->game_map)[enemy->coor_x][enemy->coor_y] = BLANK_CODE;
 
-    drawRectARGB32(enemy->coor_x * TILE_SIZE, enemy->coor_y * TILE_SIZE, enemy->coor_x * TILE_SIZE + TILE_SIZE, enemy->coor_y * TILE_SIZE + TILE_SIZE, 0x000, 1);
+    ReDrawMap(enemy->coor_x , enemy->coor_y);
 }
 
 void MoveEnemy(GameController *game_controller, Enemy *enemy)
@@ -436,4 +438,23 @@ void DrawHealthBar(GameController *game_controller){
     drawRectARGB32(17, GAME_HEIGHT - 33, 223, GAME_HEIGHT - 7, 0xb9c4bc,1 );
     drawRectARGB32(20, GAME_HEIGHT - 30, 220, GAME_HEIGHT - 10, 0x00000000 , 1);
     drawRectARGB32(20, GAME_HEIGHT - 30, game_controller->player.hp*2 + 20, GAME_HEIGHT - 10, 0x00FF0000 , 1);
+}
+
+void DrawMap(){
+    for(int y = 0; y < GAME_HEIGHT; y++){
+        for(int x = 0; x < GAME_WIDTH; x++){
+            drawPixelARGB32(x, y, game_background_image_Tiling_Grass_Texture_23x16_Green_Dense[y*GAME_WIDTH+x]);
+        }
+
+    }
+}
+
+
+void ReDrawMap(int x_coordinate, int y_coordinate){
+    for(int y_pixel = y_coordinate*TILE_SIZE; y_pixel < y_coordinate*TILE_SIZE+TILE_SIZE; y_pixel++){
+        for(int x_pixel = x_coordinate*TILE_SIZE; x_pixel < x_coordinate*TILE_SIZE+TILE_SIZE; x_pixel++){
+            drawPixelARGB32(x_pixel, y_pixel, game_background_image_Tiling_Grass_Texture_23x16_Green_Dense[y_pixel*GAME_WIDTH+x_pixel]);
+        }
+
+    }
 }

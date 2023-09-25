@@ -8,6 +8,7 @@
         "uart.h": "c",
         "game_const.h": "c",
         "player.h": "c",
-        "enemy.h": "c"
+        "enemy.h": "c",
+        "weapon.h": "c"
     }
 }

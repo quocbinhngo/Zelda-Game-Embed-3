@@ -43,9 +43,7 @@ kernel8.img: $(BUILD_DIR)/boot.o $(OFILES) $(IMAGEOFILES) $(FONTOFILES) $(GAMEOF
 
 clean:
 	rm -f *.img .\build\*.elf .\build\*.o
+	
 
 run:
 	qemu-system-aarch64 -M raspi3b -kernel kernel8.img -serial null -serial stdio
-
-
-
