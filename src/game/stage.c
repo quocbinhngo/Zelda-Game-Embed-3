@@ -98,9 +98,43 @@ void update_setting_stage(stage *option)
     }
 }
 
-void setting_stage(stage *option, stage *main)
+void update_map_stage(stage *option)
 {
-    DrawMap();
+    draw_button(100, "Grass", 0);
+    draw_button(300, "Desert", 0);
+    draw_button(500, "Dungeon", 0);
+
+    switch (*option)
+    {
+    case 0:
+    {
+        uart_puts("grass");
+        draw_button(100, "GRASS", 1);
+        break;
+    }
+    case 1:
+    {
+        uart_puts("desert");
+        draw_button(300, "DESERT", 1);
+        break;
+    }
+    case 2:
+    {
+        uart_puts("dungeon");
+        draw_button(500, "DUNGEON", 1);
+        break;
+    }
+    default:
+    {
+        uart_puts("default");
+        break;
+    }
+    }
+}
+
+void setting_stage(stage *option, stage *main, int *map)
+{
+    DrawMap(*map);
     int cont_loop = 1;
 
     stage choices[] = {DIFF, MAP, MENU};
@@ -149,10 +183,10 @@ void setting_stage(stage *option, stage *main)
         }
     }
 
-    DrawMap();
+    DrawMap(*map);
 }
 
-void menu_stage(stage *option, stage *main, int *diff)
+void menu_stage(stage *option, stage *main, int *diff, int *map)
 {
     char *levelStr;
 
@@ -162,7 +196,7 @@ void menu_stage(stage *option, stage *main, int *diff)
     }
     uart_sendc('\n');
 
-    DrawMap();
+    DrawMap(*map);
 
     stringFont(500, 40, "Level: ", BUTTON_PRIMARY_COLOR, LARGE_FONT);
 
@@ -231,11 +265,64 @@ void menu_stage(stage *option, stage *main, int *diff)
             update_menu_stage(option);
         }
     }
+
+    DrawMap(*map);
 }
 
-void diff_stage(stage *option, stage *main, int *diff)
+void map_stage(stage *option, stage *main, int *map)
 {
-    DrawMap();
+    DrawMap(*map);
+    update_map_stage(option);
+    int cont_loop = 1;
+
+    stage choices[] = {0, 1, 2};
+    int choice_index = 0;
+
+    while (cont_loop)
+    {
+        char key = getUart();
+
+        stage previous = *option;
+
+        switch (key)
+        {
+        case 'w':
+        {
+            choice_index = (choice_index - 1 + 3) % 3;
+            break;
+        }
+        case 's':
+        {
+            choice_index = (choice_index + 1) % 3;
+            break;
+        }
+        case '\n':
+        {
+            *map = *option;
+            cont_loop = 0;
+            break;
+        }
+        default:
+        {
+            break;
+        }
+        }
+
+        *option = choices[choice_index];
+        if (*option != previous)
+        {
+            update_map_stage(option);
+        }
+    }
+
+    DrawMap(*map);
+}
+
+void diff_stage(stage *option, stage *main, int *diff, int *map)
+{
+    DrawMap(*map);
+    update_diff_stage(diff);
+
     int cont_loop = 1;
 
     update_diff_stage(diff);
@@ -276,10 +363,10 @@ void diff_stage(stage *option, stage *main, int *diff)
         }
     }
 
-    DrawMap();
+    DrawMap(*map);
 }
 
-void game_stage(stage *main, int *diff)
+void game_stage(stage *main, int *diff, int*map)
 {
     GameController game_controller_obj;
     game_controller_obj.diff = diff;
@@ -289,9 +376,9 @@ void game_stage(stage *main, int *diff)
     uart_dec(diff);
     uart_puts("\n");
 
-    DrawMap();
+    DrawMap(*map);
 
-    StartGame(game_controller);
+    StartGame(game_controller, *map);
 
     int enemy_movement_timer = 0;
     int spawn_timer = 50;
