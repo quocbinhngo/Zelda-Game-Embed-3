@@ -32,8 +32,11 @@ void menu_stage(stage *option, stage *main)
 
 void game_stage(stage *main)
 {
+     
      GameController game_controller_obj;
      GameController *game_controller = &game_controller_obj;
+
+    DrawMap(game_controller);
 
     StartGame(game_controller);
 
@@ -45,7 +48,7 @@ void game_stage(stage *main)
 
     while (1)
     {
-
+       
         char input = getUart();
         uart_sendc(input);
         uart_puts("\n");
