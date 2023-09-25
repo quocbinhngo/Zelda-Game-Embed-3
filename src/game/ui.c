@@ -6,8 +6,6 @@
 void draw_button(int offsetY, char *string, int is_primary)
 {
     int offsetX = (1280 - BUTTON_WIDTH) / 2;
-    uart_dec(BUTTON_WIDTH);
-    uart_dec(offsetX);
 
     int text_color,
         background_color;

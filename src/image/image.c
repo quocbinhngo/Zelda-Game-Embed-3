@@ -9,19 +9,8 @@ int get_x_offset(int image_index)
     return image_index * IMAGE_WIDTH;
 }
 
-void print(int x, int y)
-{
-    uart_dec(x);
-    uart_puts(" ");
-    uart_dec(y);
-    uart_puts("\n");
-}
-
 void image_mode()
 {
-    uart_puts("Max width: ");
-    uart_dec(IMAGE_WIDTH * (image_allArray_LEN));
-    uart_puts("\n");
 
     framebf_init(SCREEN_WIDTH, SCREEN_HEIGHT, IMAGE_WIDTH * (image_allArray_LEN), IMAGE_HEIGHT);
     int y_offset = 0, x_offset = 0, image_index = 0;
@@ -37,14 +26,12 @@ void image_mode()
         {
             y_offset = (SCREEN_HEIGHT + y_offset + 5 < IMAGE_HEIGHT) ? y_offset + 5 : y_offset;
             mbox_buffer_setup(ADDR(mBuf), MBOX_TAG_SETVIRTOFF, 2, x_offset, y_offset);
-            print(x_offset, y_offset);
             break;
         }
         case 'w':
         {
             y_offset = (y_offset - 5 >= 0) ? y_offset - 5 : y_offset;
             mbox_buffer_setup(ADDR(mBuf), MBOX_TAG_SETVIRTOFF, 2, x_offset, y_offset);
-            print(x_offset, y_offset);
             break;
         }
         case 'a':
@@ -52,7 +39,6 @@ void image_mode()
             image_index = (image_index - 1 + image_allArray_LEN) % image_allArray_LEN, y_offset = 0;
             drawImage(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT, image_allArray[image_index]);
             mbox_buffer_setup(ADDR(mBuf), MBOX_TAG_SETVIRTOFF, 2, x_offset, y_offset);
-            print(x_offset, y_offset);
             break;
         }
         case 'd':
@@ -60,7 +46,6 @@ void image_mode()
             image_index = (image_index + 1 + image_allArray_LEN) % image_allArray_LEN, y_offset = 0;
             drawImage(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT, image_allArray[image_index]);
             mbox_buffer_setup(ADDR(mBuf), MBOX_TAG_SETVIRTOFF, 2, x_offset, y_offset);
-            print(x_offset, y_offset);
             break;
         }
         default:

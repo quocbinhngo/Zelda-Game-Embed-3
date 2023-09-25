@@ -114,6 +114,5 @@ void mbox_buffer_setup(unsigned int buffer_addr, unsigned int tag_identifier,
     }
     else // If calling the request is failed
     {
-        uart_puts("Unable to query!\n");
     }
 }

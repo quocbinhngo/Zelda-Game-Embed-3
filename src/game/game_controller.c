@@ -181,6 +181,11 @@ void MovePlayer(GameController *game_controller, char input)
 void InitEnemy(GameController *game_controller, int position)
 {
     Enemy enemy;
+
+    uart_puts("Ptr enemy: ");
+    uart_hex(&enemy);
+    uart_puts("\n");
+
     switch (position)
     {
     case 0:
@@ -210,11 +215,6 @@ void DrawEnemy(GameController *game_controller, Enemy *enemy)
 {
     (game_controller->game_map)[enemy->coor_x][enemy->coor_y] = ENEMY_CODE;
     drawImage(enemy->coor_x * TILE_SIZE, enemy->coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, enemy_image_1);
-
-    uart_dec(enemy->coor_x);
-    uart_puts(" ");
-    uart_dec(enemy->coor_y);
-    uart_puts("\n");
 }
 
 void EraseEnemy(GameController *game_controller, Enemy *enemy)
@@ -230,14 +230,17 @@ void MoveEnemy(GameController *game_controller, Enemy *enemy)
 
     enemy->moveCount++;
 
+    // if (enemy->moveCount < (MOVE_DELAY / (game_controller->diff + 1)))
     if (enemy->moveCount < (MOVE_DELAY / (game_controller->diff + 1)))
     {
         return;
     }
 
+    uart_puts("move cnt\n");
+    uart_dec(enemy->moveCount);
+
     enemy->moveCount = 0;
 
-    uart_puts("begin to move\n");
     int diff_x, diff_y;
     int direct_x, direct_y;
 
@@ -284,12 +287,6 @@ void MoveEnemy(GameController *game_controller, Enemy *enemy)
         EraseEnemy(game_controller, enemy);
         enemy->coor_x = new_x, enemy->coor_y = new_y;
 
-        uart_puts("Enemy loc: ");
-        uart_dec(enemy->coor_x);
-        uart_puts(" ");
-        uart_dec(enemy->coor_y);
-        uart_puts("\n");
-
         DrawEnemy(game_controller, enemy);
         break;
     }
@@ -309,9 +306,6 @@ void EnemyAttack(GameController *game_controller)
 {
     Player *player = &game_controller->player;
     player->hp -= 10;
-    uart_puts("\nCurrent player health: ");
-    uart_dec(player->hp);
-    uart_puts("\n");
 
     if (player->hp > 0)
     {
@@ -382,26 +376,11 @@ void PlayerAttack(GameController *game_controller)
     {
         Enemy *enemy = &game_controller->enemy_list.enemies[i];
 
-        uart_puts("Attack: ");
-        uart_dec(attack_loc_x);
-        uart_puts(" ");
-        uart_dec(attack_loc_y);
-        uart_puts("\n");
-
-        uart_puts("Enemy: ");
-        uart_dec(enemy->coor_x);
-        uart_puts(" ");
-        uart_dec(enemy->coor_y);
-        uart_puts("\n\n");
-
-        if (enemy->coor_x == attack_loc_x && enemy->coor_y == attack_loc_y)
+        if (enemy->coor_x == attack_loc_x && enemy->coor_y == attack_loc_y && enemy->active)
         {
             game_controller->enemy_list.enemies[i].active = 0;
             EraseEnemy(game_controller, enemy);
             game_controller->score++;
-            uart_puts("\nCurrent score: ");
-            uart_dec(game_controller->score);
-            uart_puts("\n");
         }
     }
 
@@ -472,11 +451,9 @@ void DrawScore(GameController *game_controller)
 {
     char temp_buffer[5], score[5];
     int currentScore = game_controller->score, i = 4, j = 0;
-    // uart_dec(currentScore);
     do
     {
         temp_buffer[i] = (currentScore % 10) + '0';
-        // uart_sendc(temp_buffer[i]);
         i--;
         currentScore /= 10;
     } while (currentScore != 0);
@@ -486,7 +463,6 @@ void DrawScore(GameController *game_controller)
         j++;
     }
     score[j] = 0;
-    // uart_puts(score);
     drawRectARGB32(GAME_WIDTH / 2 + 25, TILE_SIZE, GAME_WIDTH / 2 + 50, TILE_SIZE + 10, 0x00000000, 1);
     stringFont(GAME_WIDTH / 2 - 25, TILE_SIZE, "Score: ", 0x00ffffff, SMALL_FONT);
     stringFont(GAME_WIDTH / 2 + 25, TILE_SIZE, score, 0x00ffffff, SMALL_FONT);
