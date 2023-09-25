@@ -16,7 +16,7 @@ void game_mode()
 
     framebf_init(GAME_WIDTH, GAME_HEIGHT, GAME_WIDTH, GAME_HEIGHT);
 
-    stage cur_stage = GAME;
+    stage cur_stage = MENU;
     stage option = GAME;
 
     while (1)

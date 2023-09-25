@@ -6,15 +6,15 @@
 #include "game_const.h"
 #include "game_controller.h"
 #include "../time.h"
+#include "ui.h"
+
+
 
 void menu_stage(stage *option, stage *main)
 {
-
-    // draw background
-    drawImage(0, 0, GAME_WIDTH, GAME_HEIGHT, temp_imageallArray[0]);
-
-    stringFont(200, 200, "Hello", 0x00FF00000);
-    stringFont(200, 400, "Click space to start", 0x00ffffff);
+    
+    draw_button(100, "Start");
+    draw_button(300, "Options");
 
     while (1)
     {
@@ -27,6 +27,8 @@ void menu_stage(stage *option, stage *main)
         }
     }
 }
+
+
 
 void game_stage(stage *main)
 {
