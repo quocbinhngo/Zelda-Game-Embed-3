@@ -127,12 +127,12 @@ void DrawPlayer(GameController *game_controller, int player_mode)
     {
     case NORMAL_MODE:
     {
-        drawImage(game_controller->player.coor_x * TILE_SIZE, game_controller->player.coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, player_image_allArray[game_controller->player.dir]);
+        drawCharacterImage(game_controller->player.coor_x * TILE_SIZE, game_controller->player.coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, player_image_allArray[game_controller->player.dir]);
         break;
     }
     case ATTACK_MODE:
     {
-        drawImage(game_controller->player.coor_x * TILE_SIZE, game_controller->player.coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, player_attack_image_allArray[game_controller->player.dir]);
+        drawCharacterImage(game_controller->player.coor_x * TILE_SIZE, game_controller->player.coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, player_attack_image_allArray[game_controller->player.dir]);
         break;
     }
 
@@ -211,10 +211,10 @@ void MovePlayer(GameController *game_controller, char input)
     }
 }
 
-void InitEnemy(GameController *game_controller, int position)
+void InitEnemy(GameController *game_controller, int position, int id)
 {
     Enemy enemy;
-
+    enemy.id = id;
     // uart_puts("Ptr enemy: ");
     // uart_hex(&enemy);
     // uart_puts("\n");
@@ -257,8 +257,10 @@ void InitEnemy(GameController *game_controller, int position)
 
 void DrawEnemy(GameController *game_controller, Enemy *enemy)
 {
+ 
+
     (game_controller->game_map)[enemy->coor_y][enemy->coor_x] = ENEMY_CODE;
-    drawImage(enemy->coor_x * TILE_SIZE, enemy->coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, enemy_image_1);
+    drawCharacterImage(enemy->coor_x * TILE_SIZE, enemy->coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, enemy_image_allArray[enemy->id-1]);
 }
 
 void EraseEnemy(GameController *game_controller, Enemy *enemy)

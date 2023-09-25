@@ -176,7 +176,7 @@ void draw_nums(int num, int offsetX, int offsetY, int erase)
 }
 
 // function to assign font value to an array
-void assignArray(unsigned int des[8], int fontIndex)
+void assignArray(unsigned int *des, int fontIndex)
 {
     for (int i = fontIndex; i < fontIndex + 8; i++)
     {
@@ -209,7 +209,7 @@ void drawCharacterFont(int x, int y, char character, unsigned int color)
     unsigned int a[8];
     int charIndex = character - 33;
 
-    assignArray(&a, charIndex * 8);
+    assignArray(&a[0], charIndex * 8);
 
     int xa = 0;
 

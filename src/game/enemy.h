@@ -8,7 +8,7 @@
 
 typedef struct Enemy
 {
-    int coor_x, coor_y, active, moveCount;
+    int coor_x, coor_y, active, moveCount, id;
 } Enemy;
 
 typedef struct EnemyList
