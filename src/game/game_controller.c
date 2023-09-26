@@ -4,6 +4,7 @@
 #include "resources/game_background.h"
 #include "resources/enemy.h"
 #include "resources/weapon.h"
+#include "resources/obstacle.h"
 #include "player.h"
 #include "../uart.h"
 #include "../font/font.h"
@@ -12,6 +13,7 @@
 
 int IsMoveInput(char c)
 {
+    // Check if input is w, a, s, d
     switch (c)
     {
     case 'a':
@@ -21,7 +23,6 @@ int IsMoveInput(char c)
     {
         return 1;
     }
-    /* code */
     default:
     {
         return 0;
@@ -31,18 +32,14 @@ int IsMoveInput(char c)
 
 int IsAttackInput(char c)
 {
-    switch (c)
-    {
-    case 'j':
-    {
-        return 1;
-    }
-    /* code */
-    default:
-    {
-        return 0;
-    }
-    }
+    // Check if input is j
+    return c == 'j';
+}
+
+int IsWeaponInput(char c)
+{
+    // Check if input is k
+    return c == 'k';
 }
 
 int IsExitGameInput(char key) { return key == 'j'; }
@@ -59,6 +56,7 @@ void StartGame(GameController *game_controller, int *map)
     game_controller->map = *map;
 
     ClearGameMap(game_controller);
+    InitObstacleGameMap(game_controller);
     InitPlayer(game_controller);
 
     game_controller->enemy_list.num_enemies = 0;
@@ -79,6 +77,15 @@ void ClearGameMap(GameController *game_controller)
             (game_controller->game_map)[i][j] = BLANK_CODE;
         }
     }
+}
+
+void InitObstacleGameMap(GameController *game_controller)
+{
+    game_controller->game_map[10][10] = 3;
+    game_controller->game_map[11][10] = 3;
+    // game_controller->game_map[11][11] = 4;
+
+    DrawObstacle(game_controller);
 }
 
 void PrintGameMap(GameController *game_controller)
@@ -108,6 +115,7 @@ void InitPlayer(GameController *game_controller)
     player.hp = MAX_HP;
 
     game_controller->player = player;
+    game_controller->weapon = 0;
     DrawPlayer(game_controller, NORMAL_MODE);
 
     // drawRectARGB32(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH / 2 + TILE_SIZE, GAME_HEIGHT / 2 + TILE_SIZE, 0xffffff, 1);
@@ -200,25 +208,33 @@ void MovePlayer(GameController *game_controller, char input)
         DrawPlayer(game_controller, NORMAL_MODE);
         break;
     }
-    case ENEMY_CODE:
-    {
-        DrawPlayer(game_controller, NORMAL_MODE);
+    // case ENEMY_CODE:
+    // {
+    //     DrawPlayer(game_controller, NORMAL_MODE);
 
-        // for (int i = 0; i < game_controller->enemy_list.num_enemies; i++)
-        // {
-        //     Enemy *cur_enemy = &(game_controller->enemy_list.enemies[i]);
-        //     if (cur_enemy->coor_x == new_x && cur_enemy->coor_y == new_y)
-        //     {
-        //         EnemyAttack(game_controller, cur_enemy);
-        //         break;
-        //     }
-        // }
-    }
+    //     // for (int i = 0; i < game_controller->enemy_list.num_enemies; i++)
+    //     // {
+    //     //     Enemy *cur_enemy = &(game_controller->enemy_list.enemies[i]);
+    //     //     if (cur_enemy->coor_x == new_x && cur_enemy->coor_y == new_y)
+    //     //     {
+    //     //         EnemyAttack(game_controller, cur_enemy);
+    //     //         break;
+    //     //     }
+    //     // }
+    // }
+    // case 3:
+    // {
+    // }
     default:
     {
         break;
     }
     }
+}
+
+void ChangeWeapon(GameController *game_controller)
+{
+    game_controller->weapon = (game_controller->weapon + 1) % 3;
 }
 
 void InitEnemy(GameController *game_controller, int position, int id)
@@ -433,6 +449,11 @@ void PlayerAttack(GameController *game_controller)
     }
     }
 
+    if (game_controller->game_map[attack_loc_y][attack_loc_x] >= 3)
+    {
+        return;
+    }
+
     game_controller->weapon_x = attack_loc_x, game_controller->weapon_y = attack_loc_y;
 
     for (int i = 0; i < game_controller->enemy_list.num_enemies; i++)
@@ -474,7 +495,7 @@ void MoveEnemies(GameController *game_controller)
 
 void DrawWeapon(GameController *game_controller)
 {
-    drawImage(game_controller->weapon_x * TILE_SIZE, game_controller->weapon_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, weapon_image_allArray[0]);
+    drawCharacterImage(game_controller->weapon_x * TILE_SIZE, game_controller->weapon_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, weapon_image_allArray[game_controller->weapon]);
 }
 
 void EraseWeapon(GameController *game_controller)
@@ -529,21 +550,29 @@ void DrawScore(GameController *game_controller)
     score[j] = 0;
 
     stringFont((MAP_WIDTH / 2 - 5) * TILE_SIZE, TILE_SIZE, "Score: ", 0x00ffffff, LARGE_FONT);
-    if (game_controller->game_map[MAP_WIDTH / 2 + 2][1] != PLAYER_CODE)
+    if (game_controller->game_map[1][MAP_WIDTH / 2 + 2] != PLAYER_CODE)
     {
         ReDrawMap(MAP_WIDTH / 2 + 2, 1, game_controller->map);
     }
-    if (game_controller->game_map[MAP_WIDTH / 2 + 3][1] != PLAYER_CODE)
+    if (game_controller->game_map[1][MAP_WIDTH / 2 + 3] != PLAYER_CODE)
     {
         ReDrawMap(MAP_WIDTH / 2 + 3, 1, game_controller->map);
     }
-    if (game_controller->game_map[MAP_WIDTH / 2 + 2][2] != PLAYER_CODE)
+    if (game_controller->game_map[1][MAP_WIDTH / 2 + 4] != PLAYER_CODE)
+    {
+        ReDrawMap(MAP_WIDTH / 2 + 4, 1, game_controller->map);
+    }
+    if (game_controller->game_map[2][MAP_WIDTH / 2 + 2] != PLAYER_CODE)
     {
         ReDrawMap(MAP_WIDTH / 2 + 2, 2, game_controller->map);
     }
-    if (game_controller->game_map[MAP_WIDTH / 2 + 3][2] != PLAYER_CODE)
+    if (game_controller->game_map[2][MAP_WIDTH / 2 + 3] != PLAYER_CODE)
     {
         ReDrawMap(MAP_WIDTH / 2 + 3, 2, game_controller->map);
+    }
+    if (game_controller->game_map[2][MAP_WIDTH / 2 + 4] != PLAYER_CODE)
+    {
+        ReDrawMap(MAP_WIDTH / 2 + 4, 2, game_controller->map);
     }
 
     stringFont((MAP_WIDTH / 2 + 2) * TILE_SIZE, TILE_SIZE, score, 0x00ffffff, LARGE_FONT);
@@ -566,11 +595,18 @@ void DrawGameOver(GameController *game_controller)
         j++;
     }
     score[j] = 0;
+    // ebb134
     drawRectARGB32(GAME_WIDTH / 4, GAME_HEIGHT / 4, GAME_WIDTH * 3 / 4, GAME_HEIGHT * 3 / 4, 0x00000000, 1);
-    drawRectARGB32(GAME_WIDTH / 4 + 2, GAME_HEIGHT / 4 + 2, GAME_WIDTH * 3 / 4 - 2, GAME_HEIGHT * 3 / 4 - 2, 0xebb134, 1);
+    drawRectARGB32(GAME_WIDTH / 4 + 2, GAME_HEIGHT / 4 + 2, GAME_WIDTH * 3 / 4 - 2, GAME_HEIGHT * 3 / 4 - 2, 0xb07a05, 1);
+    drawRectARGB32(GAME_WIDTH / 4 + 10, GAME_HEIGHT / 4 + 10, GAME_WIDTH * 3 / 4 - 10, GAME_HEIGHT * 3 / 4 - 10, 0x00000000, 1);
+    drawRectARGB32(GAME_WIDTH / 4 + 12, GAME_HEIGHT / 4 + 12, GAME_WIDTH * 3 / 4 - 12, GAME_HEIGHT * 3 / 4 - 12, 0xebb134, 1);
 
-    stringFont(GAME_WIDTH / 2 - 25, GAME_HEIGHT / 2 - 50, "Score: ", 0x00ffffff, SMALL_FONT);
-    stringFont(GAME_WIDTH / 2 + 25, GAME_HEIGHT / 2 - 50, score, 0x00ffffff, SMALL_FONT);
+    // <<<<<<< HEAD
+    stringFont((MAP_WIDTH / 2 - 5) * TILE_SIZE, GAME_HEIGHT / 2 - 150, "Game Over", 0x00ffffff, LARGE_FONT);
+    stringFont((MAP_WIDTH / 2 - 4) * TILE_SIZE, GAME_HEIGHT / 2 - 50, "Score: ", 0x00ffffff, LARGE_FONT);
+    stringFont((MAP_WIDTH / 2 + 3) * TILE_SIZE, GAME_HEIGHT / 2 - 50, score, 0x00ffffff, LARGE_FONT);
+
+    stringFont((MAP_WIDTH / 3 * 4 + 4) * TILE_SIZE, (MAP_HEIGHT / 2 + 3) * TILE_SIZE, "Press 'j' to get back to Menu screen", 0x00ffffff, SMALL_FONT);
 }
 
 void CancelEnemyAttack(GameController *game_controller)
@@ -592,5 +628,22 @@ void CancelEnemyAttack(GameController *game_controller)
         enemy->is_attack = 0;
         EraseEnemy(game_controller, enemy);
         DrawEnemy(game_controller, enemy);
+        // =======
+    }
+}
+
+void DrawObstacle(GameController *game_controller)
+{
+
+    for (int y = 0; y < MAP_HEIGHT; y++)
+    {
+        for (int x = 0; x < MAP_WIDTH; x++)
+        {
+            if (game_controller->game_map[y][x] == 3)
+            {
+                drawCharacterImage(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, obstacle_allArray[0]);
+            }
+        }
+        // >>>>>>> 4ade6e3e0c0f4f8bf25056cd209314575a60de51
     }
 }

@@ -27,6 +27,8 @@ void game_mode()
 
     GameController game_controller_obj;
     GameController *game_controller = &game_controller_obj;
+
+
     int start_game = 1;
 
     while (cont_loop)
