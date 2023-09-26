@@ -4,6 +4,7 @@
 #include "resources/game_background.h"
 #include "resources/enemy.h"
 #include "resources/weapon.h"
+#include "resources/map.h"
 #include "resources/obstacle.h"
 #include "player.h"
 #include "../uart.h"
@@ -55,8 +56,8 @@ void StartGame(GameController *game_controller, int *map)
     game_controller->is_game_active = 1;
     game_controller->map = *map;
 
-    ClearGameMap(game_controller);
-    InitObstacleGameMap(game_controller);
+    ClearGameMap(game_controller, map);
+    //InitObstacleGameMap(game_controller);
     InitPlayer(game_controller);
 
     game_controller->enemy_list.num_enemies = 0;
@@ -65,26 +66,33 @@ void StartGame(GameController *game_controller, int *map)
 void ResumeGame(GameController *game_controller, int *map)
 {
     DrawPlayer(game_controller, NORMAL_MODE);
-    InitObstacleGameMap(game_controller);
+    DrawObstacle(game_controller);
+    //InitObstacleGameMap(game_controller);
 }
 
-void ClearGameMap(GameController *game_controller)
+void ClearGameMap(GameController *game_controller, int *map)
 {
     game_controller->score = 0;
+
+
     for (int i = 0; i < MAP_HEIGHT; i++)
     {
         for (int j = 0; j < MAP_WIDTH; j++)
         {
-            (game_controller->game_map)[i][j] = BLANK_CODE;
+            (game_controller->game_map)[i][j] = (*map == 0 ? map_1[i][j] : (*map == 1 ? map_2[i][j] : map_3[i][j]));
         }
     }
+
+    DrawObstacle(game_controller);
+    
 }
 
 void InitObstacleGameMap(GameController *game_controller)
 {
     game_controller->game_map[10][10] = 3;
     game_controller->game_map[11][10] = 3;
-    // game_controller->game_map[11][11] = 4;
+    game_controller->game_map[11][11] = 4;
+    game_controller->game_map[11][12] = 5;
 
     DrawObstacle(game_controller);
 }
@@ -353,17 +361,20 @@ void MoveEnemy(GameController *game_controller, Enemy *enemy)
     // diff_x = player->coor_x < enemy->coor_x? enemy->coor_x - player->coor_x : player->coor_x - enemy->coor_x;
     // diff_y = player->coor_y < enemy->coor_y? enemy->coor_y - player->coor_y : player->coor_y - enemy->coor_y;
     int new_x = enemy->coor_x, new_y = enemy->coor_y;
+    int sub_new_x = enemy->coor_x, sub_new_y = enemy->coor_y;
 
     //Move towards the direction between x and y with shorter distance
     if (diff_x > diff_y)
     {
         //move direction x
         new_x = (direct_x > 0) ? (enemy->coor_x - ENEMY_SPEED) : (enemy->coor_x + ENEMY_SPEED);
+        sub_new_y = (direct_y > 0) ? enemy->coor_y - ENEMY_SPEED : enemy->coor_y + ENEMY_SPEED;
     }
     else
     {
         // move direction y
         new_y = (direct_y > 0) ? enemy->coor_y - ENEMY_SPEED : enemy->coor_y + ENEMY_SPEED;
+        sub_new_x = (direct_x > 0) ? (enemy->coor_x - ENEMY_SPEED) : (enemy->coor_x + ENEMY_SPEED);
     }
 
     //Check if the new enemy position is blank or has the player
@@ -386,6 +397,12 @@ void MoveEnemy(GameController *game_controller, Enemy *enemy)
     }
     default:
     {
+        if ((game_controller->game_map)[sub_new_y][sub_new_x] == BLANK_CODE){
+            EraseEnemy(game_controller, enemy);
+            enemy->coor_x = sub_new_x, enemy->coor_y = sub_new_y;
+
+            DrawEnemy(game_controller, enemy);
+        }
         break;
     }
     }
@@ -666,9 +683,9 @@ void DrawObstacle(GameController *game_controller)
     {
         for (int x = 0; x < MAP_WIDTH; x++)
         {
-            if (game_controller->game_map[y][x] == 3)
+            if (game_controller->game_map[y][x] >= 3)
             {
-                drawCharacterImage(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, obstacle_allArray[0]);
+                drawCharacterImage(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, obstacle_allArray[(game_controller->game_map[y][x] - 3) + (game_controller->map == 0 ? 0 : (game_controller->map == 1 ? 3 : 6))]);
             }
         }
         
