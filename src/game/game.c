@@ -27,6 +27,9 @@ void game_mode()
 
     GameController game_controller_obj;
     GameController *game_controller = &game_controller_obj;
+
+    game_controller_obj.game_map[10][10] = 3;
+    game_controller_obj.game_map[11][10] = 3;
     int start_game = 1;
 
     while (cont_loop)

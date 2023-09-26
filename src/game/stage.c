@@ -392,6 +392,7 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
     game_controller->diff = *diff;
 
     DrawMap(*map);
+    DrawObstacle(game_controller);
 
     if (*start_game)
     {

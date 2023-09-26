@@ -4,6 +4,7 @@
 #include "resources/game_background.h"
 #include "resources/enemy.h"
 #include "resources/weapon.h"
+#include "resources/obstacle.h"
 #include "player.h"
 #include "../uart.h"
 #include "../font/font.h"
@@ -203,6 +204,10 @@ void MovePlayer(GameController *game_controller, char input)
     {
         DrawPlayer(game_controller, NORMAL_MODE);
         EnemyAttack(game_controller);
+    }
+    case 3:
+    {
+        
     }
     default:
     {
@@ -556,4 +561,15 @@ void DrawGameOver(GameController *game_controller)
     stringFont((MAP_WIDTH / 2 + 3) * TILE_SIZE, GAME_HEIGHT / 2 - 50, score, 0x00ffffff, LARGE_FONT);
 
     stringFont((MAP_WIDTH / 3 * 4 + 4) * TILE_SIZE, (MAP_HEIGHT / 2 + 3) * TILE_SIZE, "Press 'j' to get back to Menu screen", 0x00ffffff, SMALL_FONT);
+}
+
+void DrawObstacle(GameController *game_controller){
+
+    for(int y = 0; y < MAP_HEIGHT; y++){
+        for(int x = 0; x < MAP_WIDTH; x++){
+            if(game_controller->game_map[y][x] == 3){
+                drawCharacterImage(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, obstacle_allArray[0]);
+            } 
+        }
+    }
 }
