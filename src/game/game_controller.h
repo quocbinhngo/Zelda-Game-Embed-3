@@ -112,4 +112,6 @@ void ReDrawMap(int x_coordinate, int y_coordinate, int map_state);
 //Function to display the player's score
 void DrawScore(GameController *game_controller);
 void DrawGameOver(GameController *game_controller);
+
+void DrawObstacle(GameController *game_controller);
 #endif
