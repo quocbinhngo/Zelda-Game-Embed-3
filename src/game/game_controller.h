@@ -13,7 +13,7 @@
 #define ATTACK_MODE 1
 
 
-#define CANCEL_ATTACK_TIMER 15
+#define CANCEL_ATTACK_TIMER 10
 
 //Define game controller struct
 typedef struct GameController

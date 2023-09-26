@@ -470,7 +470,7 @@ void PlayerAttack(GameController *game_controller)
     }
 
     DrawWeapon(game_controller);
-    game_controller->cancel_attack_timer++;
+    game_controller->cancel_attack_timer = 1;
 }
 
 void CancelAttack(GameController *game_controller)
