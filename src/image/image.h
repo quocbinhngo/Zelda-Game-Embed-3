@@ -3,7 +3,7 @@
 
 #define IMAGE_WIDTH 600
 #define IMAGE_HEIGHT 600
-#define SCREEN_WIDTH 400
+#define SCREEN_WIDTH 600
 #define SCREEN_HEIGHT 400
 
 void image_mode();
