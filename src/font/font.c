@@ -116,7 +116,7 @@ void draw_num(int num, int offsetX, int offsetY, int erase)
             {
                 if (one2five[y * 155 + x] > 0)
                 {
-                        drawPixelARGB32(x - offset + offsetX, y + offsetY, 0x00FFFFFF);
+                    drawPixelARGB32(x - offset + offsetX, y + offsetY, 0x00FFFFFF);
 
                     // if (erase)
                     //     drawPixelARGB32(x - offset + offsetX, y + offsetY, background_img[(int)(y + offsetY) * 1024 + (int)(x - offset + offsetX)]);
@@ -138,11 +138,11 @@ void draw_num(int num, int offsetX, int offsetY, int erase)
                 if (six2zero[y * 155 + x] > 0xc0)
                 {
 
-                        drawPixelARGB32(x - offset + offsetX, y + offsetY, 0x00FFFFFF);
-                        // if (erase)
-                        //     drawPixelARGB32(x - offset + offsetX, y + offsetY, background_img[(int)(y + offsetY) * 1024 + (int)(x - offset + offsetX)]);
-                        // else
-                            // drawPixelARGB32(x - offset + offsetX, y + offsetY, 0x00FFFFFF);
+                    drawPixelARGB32(x - offset + offsetX, y + offsetY, 0x00FFFFFF);
+                    // if (erase)
+                    //     drawPixelARGB32(x - offset + offsetX, y + offsetY, background_img[(int)(y + offsetY) * 1024 + (int)(x - offset + offsetX)]);
+                    // else
+                    // drawPixelARGB32(x - offset + offsetX, y + offsetY, 0x00FFFFFF);
                 }
             }
         }
@@ -254,8 +254,7 @@ void stringFont(int x, int y, char *string, unsigned int color, int size)
         }
 
         return;
-    } 
-
+    }
 
     // framebf_init(FONT_WIDTH, FONT_HEIGHT, FONT_WIDTH, FONT_HEIGHT);
     stringFontLarge(x, y, string, color);
@@ -307,4 +306,16 @@ void stringFontLarge(int offsetX, int offsetY, char *string, unsigned int attr)
         }
         string++;
     }
+}
+
+void font_mode()
+{
+    framebf_init(FONT_WIDTH, FONT_HEIGHT, FONT_WIDTH, FONT_HEIGHT);
+    stringFont(200, 100, "Nguyen The Bao Ngoc", 0x00AA0000, SMALL_FONT);
+    stringFont(200, 120, "Vo Duc Tan", 0x00BB00, SMALL_FONT);
+    stringFont(200, 140, "Doan Tran Thien Phuc", 0x0000CC, SMALL_FONT);
+    stringFont(200, 160, "Ngo Quoc Binh", 0xAABB00, SMALL_FONT);
+    stringFont(200, 180, "0123456789", 0x00BBCC, SMALL_FONT);
+    stringFont(200, 200, "!@#$%^&*()", 0xAA00CC, SMALL_FONT);
+
 }

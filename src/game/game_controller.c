@@ -242,6 +242,7 @@ void InitEnemy(GameController *game_controller, int position, int id)
 {
     Enemy enemy;
     enemy.id = id;
+    enemy.is_attack = 0;
     // uart_puts("Ptr enemy: ");
     // uart_hex(&enemy);
     // uart_puts("\n");
@@ -471,6 +472,7 @@ void PlayerAttack(GameController *game_controller)
 
     DrawWeapon(game_controller);
     game_controller->cancel_attack_timer = 1;
+
 }
 
 void CancelAttack(GameController *game_controller)

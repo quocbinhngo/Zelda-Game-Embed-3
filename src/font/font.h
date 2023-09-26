@@ -1,8 +1,8 @@
 #ifndef FONT_H_
 #define FONT_H_
 
-#define FONT_WIDTH 1280
-#define FONT_HEIGHT 720
+#define FONT_WIDTH 720
+#define FONT_HEIGHT 540
 
 #define SMALL_FONT 0
 #define LARGE_FONT 1
@@ -19,7 +19,9 @@ void drawCharacterFont(int x, int y, char charater, unsigned int color);
 void stringFont(int x, int y, char *string, unsigned int color, int size);
 
 // Font value for each character.
-
 void stringFontLarge(int offsetX, int offsetY, char *string, unsigned int attr);
+
+// Function to display font
+void font_mode();
 
 #endif

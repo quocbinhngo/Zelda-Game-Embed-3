@@ -6,7 +6,7 @@
 #include "font/font.h"
 #include "game/game.h"
 
-#define feature 4
+#define feature 3
 
 void main()
 {
@@ -17,7 +17,7 @@ void main()
     #elif feature == 2
         video_mode();
     #elif feature == 3
-        
+        font_mode();
     #elif feature == 4
         game_mode();
     #endif
