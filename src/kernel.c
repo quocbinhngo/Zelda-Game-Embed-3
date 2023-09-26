@@ -12,13 +12,13 @@ void main()
 {
     // set up serial console
     uart_init();
-    if(feature == 1){
+    #if feature == 1
         image_mode();
-    } else if(feature == 2){
+    #elif feature == 2
         video_mode();
-    } else if(feature == 3){
+    #elif feature == 3
         
-    } else if(feature == 4){
+    #elif feature == 4
         game_mode();
-    }
+    #endif
 }
