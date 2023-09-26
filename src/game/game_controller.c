@@ -544,9 +544,16 @@ void DrawGameOver(GameController *game_controller)
         j++;
     }
     score[j] = 0;
+    //ebb134
     drawRectARGB32(GAME_WIDTH / 4, GAME_HEIGHT / 4, GAME_WIDTH * 3 / 4, GAME_HEIGHT * 3 / 4, 0x00000000, 1);
-    drawRectARGB32(GAME_WIDTH / 4 + 2, GAME_HEIGHT / 4 + 2, GAME_WIDTH * 3 / 4 - 2, GAME_HEIGHT * 3 / 4 - 2, 0xebb134, 1);
+    drawRectARGB32(GAME_WIDTH / 4 + 2, GAME_HEIGHT / 4 + 2, GAME_WIDTH * 3 / 4 - 2, GAME_HEIGHT * 3 / 4 - 2, 0xb07a05, 1);
+    drawRectARGB32(GAME_WIDTH / 4 + 10, GAME_HEIGHT / 4 + 10, GAME_WIDTH * 3 / 4 - 10, GAME_HEIGHT * 3 / 4 - 10, 0x00000000, 1);
+    drawRectARGB32(GAME_WIDTH / 4 + 12, GAME_HEIGHT / 4 + 12, GAME_WIDTH * 3 / 4 - 12, GAME_HEIGHT * 3 / 4 - 12, 0xebb134, 1);
 
-    stringFont(GAME_WIDTH / 2 - 25, GAME_HEIGHT / 2 - 50, "Score: ", 0x00ffffff, SMALL_FONT);
-    stringFont(GAME_WIDTH / 2 + 25, GAME_HEIGHT / 2 - 50, score, 0x00ffffff, SMALL_FONT);
+
+    stringFont((MAP_WIDTH / 2 - 5) * TILE_SIZE, GAME_HEIGHT / 2 - 150, "Game Over", 0x00ffffff, LARGE_FONT);
+    stringFont((MAP_WIDTH / 2 - 4) * TILE_SIZE, GAME_HEIGHT / 2 -50, "Score: ", 0x00ffffff, LARGE_FONT);
+    stringFont((MAP_WIDTH / 2 + 3) * TILE_SIZE, GAME_HEIGHT / 2 - 50, score, 0x00ffffff, LARGE_FONT);
+
+    stringFont((MAP_WIDTH / 3 * 4 + 4) * TILE_SIZE, (MAP_HEIGHT / 2 + 3) * TILE_SIZE, "Press 'j' to get back to Menu screen", 0x00ffffff, SMALL_FONT);
 }

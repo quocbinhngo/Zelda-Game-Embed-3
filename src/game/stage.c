@@ -474,7 +474,19 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
     }
 
     uart_puts("outside");
-    // DrawGameOver(game_controller);
+
+    DrawMap(*map);
+    DrawGameOver(game_controller);
+    while (1){
+
+        char input = getUart();
+
+        if(input == 'j'){
+            *main = MENU;
+            break;
+        }
+    }
+
 }
 
 // <<<<<<< HEAD
