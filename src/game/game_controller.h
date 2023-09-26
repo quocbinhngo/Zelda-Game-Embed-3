@@ -12,6 +12,8 @@
 #define NORMAL_MODE 0
 #define ATTACK_MODE 1
 
+#define CANCEL_ATTACK_TIMER 15
+
 typedef struct GameController
 {
     int game_map[MAP_HEIGHT][MAP_WIDTH], is_game_active;
@@ -19,7 +21,7 @@ typedef struct GameController
     Player player;
 
     int weapon_x, weapon_y;
-    int score, diff, map;
+    int score, diff, map, cancel_attack_timer;
 } GameController;
 // struct GameController
 // {
@@ -42,6 +44,7 @@ void InitPlayer(GameController *game_controller);
 void DrawPlayer(GameController *game_controller, int player_mode);
 void MovePlayer(GameController *game_controller, char input);
 void PlayerAttack(GameController *GameController);
+void CancelAttack(GameController *game_controller);
 // <<<<<<< HEAD
 // void InitEnemy(GameController *game_controller, Enemy *enemy);
 // == == == =

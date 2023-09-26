@@ -425,13 +425,14 @@ void PlayerAttack(GameController *game_controller)
     }
 
     DrawWeapon(game_controller);
+    game_controller->cancel_attack_timer++;
+}
 
-    // cancel danh animation
-    // for (int i = 0; i < 1e9; i++) {
-    // }
-
-    // ErasePlayer(game_controller);
-    // DrawPlayer(game_controller, NORMAL_MODE);
+void CancelAttack(GameController *game_controller)
+{
+    ErasePlayer(game_controller);
+    EraseWeapon(game_controller);
+    DrawPlayer(game_controller, NORMAL_MODE);
 }
 
 void MoveEnemies(GameController *game_controller)

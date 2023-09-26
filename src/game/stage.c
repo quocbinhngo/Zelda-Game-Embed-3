@@ -217,18 +217,18 @@ void menu_stage(stage *option, stage *main, int *diff, int *map)
     {
     case 0:
     {
-        stringFont(888, 40, "Easy", SECONDARY_COLOR, LARGE_FONT);
+        stringFont(888, 40, "Easy", PRIMARY_COLOR, LARGE_FONT);
         break;
     }
     case 1:
     {
-        stringFont(888, 40, "Medium", SECONDARY_COLOR, LARGE_FONT);
+        stringFont(888, 40, "Medium", PRIMARY_COLOR, LARGE_FONT);
 
         break;
     }
     case 2:
     {
-        stringFont(888, 40, "Hard", SECONDARY_COLOR, LARGE_FONT);
+        stringFont(888, 40, "Hard", PRIMARY_COLOR, LARGE_FONT);
         break;
     }
     default:
@@ -400,20 +400,12 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
 
     int spawn_timer = 0;
     int enemy_cnt = 0;
-    int print_map_cnt = 0;
 
     while (1)
     {
-
-        if (print_map_cnt == 50)
-        {
-            PrintGameMap(game_controller);
-            print_map_cnt = 0;
-        }
-
         char input = getUart();
 
-        if (!game_controller->is_game_active) 
+        if (!game_controller->is_game_active)
         {
             break;
         }
@@ -447,6 +439,16 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
             // }
         }
 
+        if (game_controller->cancel_attack_timer == CANCEL_ATTACK_TIMER)
+        {
+            game_controller->cancel_attack_timer = 0;
+            CancelAttack(game_controller);
+        }
+        else if (game_controller->cancel_attack_timer)
+        {
+            game_controller->cancel_attack_timer++;
+        }
+
         if (IsMoveInput(input))
         {
             MovePlayer(game_controller, input);
@@ -463,7 +465,6 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
         DrawScore(game_controller);
         wait_msec(50000);
         spawn_timer++;
-        print_map_cnt++;
     }
 }
 
