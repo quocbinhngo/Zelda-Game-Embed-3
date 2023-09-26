@@ -427,7 +427,6 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
 
             if (game_controller->diff > 0)
             {
-                uart_puts("init 2nd enemy\n");
                 InitEnemy(game_controller, 1, *diff + 1);
                 enemy_cnt++;
             }
