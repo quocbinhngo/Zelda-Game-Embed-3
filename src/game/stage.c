@@ -156,8 +156,6 @@ void setting_stage(stage *option, stage *main, int *map)
     DrawMap(*map);
     int cont_loop = 1;
 
-    stringFont(500, 40, "Settings: ", PRIMARY_COLOR, LARGE_FONT);
-
     stage choices[] = {DIFF, MAP, MENU};
     int choice_index = 0;
     *option = DIFF;
@@ -393,7 +391,6 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
 
     DrawMap(*map);
 
-
     if (*start_game)
     {
         StartGame(game_controller, map);
@@ -445,9 +442,6 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
             // }
         }
 
-        uart_puts("Cancel attack: ");
-        uart_dec(game_controller->cancel_attack_timer);
-        uart_puts("\n");
         if (game_controller->cancel_attack_timer == CANCEL_ATTACK_TIMER)
         {
 
