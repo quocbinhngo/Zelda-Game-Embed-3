@@ -155,7 +155,7 @@ void setting_stage(stage *option, stage *main, int *map)
 {
     DrawMap(*map);
     int cont_loop = 1;
-    
+
     stringFont(500, 40, "Settings: ", PRIMARY_COLOR, LARGE_FONT);
 
     stage choices[] = {DIFF, MAP, MENU};
@@ -392,7 +392,7 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
     game_controller->diff = *diff;
 
     DrawMap(*map);
-    DrawObstacle(game_controller);
+
 
     if (*start_game)
     {
@@ -406,6 +406,7 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
 
     int spawn_timer = 0;
     int enemy_cnt = 0;
+    game_controller->cancel_attack_timer = 0;
 
     while (1)
     {
@@ -425,7 +426,6 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
         if (spawn_timer == (SPAWN_TIMER / (*diff + 1)) && enemy_cnt < NUM_EMEMIES)
         // if (spawn_timer == (SPAWN_TIMER / (*diff + 1)) && index < NUM_EMEMIES)
         {
-
             InitEnemy(game_controller, 0, *diff + 1);
             spawn_timer = 0;
             enemy_cnt++;
@@ -445,8 +445,12 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
             // }
         }
 
+        uart_puts("Cancel attack: ");
+        uart_dec(game_controller->cancel_attack_timer);
+        uart_puts("\n");
         if (game_controller->cancel_attack_timer == CANCEL_ATTACK_TIMER)
         {
+
             game_controller->cancel_attack_timer = 0;
             CancelAttack(game_controller);
         }
@@ -462,7 +466,7 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
         else if (IsAttackInput(input))
         {
             PlayerAttack(game_controller);
-        } 
+        }
         else if (IsWeaponInput(input))
         {
             ChangeWeapon(game_controller);
@@ -470,6 +474,7 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
 
         // MoveEnemy(game_controller, &game_controller->enemy_list.enemies[0]);
         MoveEnemies(game_controller);
+        CancelEnemyAttack(game_controller);
 
         DrawHealthBar(game_controller);
         DrawScore(game_controller);
@@ -482,16 +487,19 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
 
     DrawMap(*map);
     DrawGameOver(game_controller);
-    while (1){
+
+    while (1)
+    {
 
         char input = getUart();
 
-        if(input == 'j'){
+        if (input == 'j')
+        {
             *main = MENU;
+            *start_game = 1;
             break;
         }
     }
-
 }
 
 // <<<<<<< HEAD
@@ -502,7 +510,7 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
 //             for(int i = 0; i < 10; i++){
 //                 if(enemies[i].active == 1){
 //                     MoveEnemy(game_controller,&enemies[i],&player);
-//                 }
+//
 //             }
 //             // MoveEnemy(game_controller, &enemies[0], &player);
 //             // MoveEnemy(game_controller, &enemies[1], &player);

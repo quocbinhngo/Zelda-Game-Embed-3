@@ -70,6 +70,16 @@ void PlayerAttack(GameController *GameController);
 //Function that player character call to cancel an attack
 void CancelAttack(GameController *game_controller);
 
+// <<<<<<< HEAD
+// // >>>>>>> e223fbe58205e9d34ddaeba41ca0db18ada116ff
+// void DrawEnemy(GameController *game_controller, Enemy *enemy);
+// void EraseEnemy(GameController *game_controller, Enemy *enemy);
+// void MoveEnemy(GameController *game_controller, Enemy *enemy);
+// void EnemyAttack(GameController *game_controller, Enemy *enemy);
+// void InitEnemy(GameController *game_controller, int position, int id);
+// void MoveEnemies(GameController *game_controller);
+// // void InitEnemy(GameController *game_controller, Enemy *enemy);
+// =======
 
 //Function to initialize a new enemy
 void InitEnemy(GameController *game_controller, int position, int id);
@@ -87,7 +97,11 @@ void MoveEnemy(GameController *game_controller, Enemy *enemy);
 void MoveEnemies(GameController *game_controller);
 
 //Function enemies use to attack the player character
-void EnemyAttack(GameController *game_controller);
+void EnemyAttack(GameController *game_controller, Enemy *enemy);
+
+// Function to cancel enemy attack
+void CancelEnemyAttack(GameController *game_controller);
+
 
 
 //Function to draw the player's weapon when attacking
