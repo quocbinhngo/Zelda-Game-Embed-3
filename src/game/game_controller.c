@@ -248,17 +248,17 @@ void InitEnemy(GameController *game_controller, int position, int id)
     }
     case 1:
     {
-        enemy.coor_x = MAP_WIDTH, enemy.coor_y = 0;
+        enemy.coor_x = MAP_WIDTH - 1, enemy.coor_y = 0;
         break;
     }
     case 2:
     {
-        enemy.coor_x = MAP_WIDTH, enemy.coor_y = MAP_HEIGHT;
+        enemy.coor_x = MAP_WIDTH - 1, enemy.coor_y = MAP_HEIGHT - 1;
         break;
     }
     case 3:
     {
-        enemy.coor_x = 0, enemy.coor_y = MAP_HEIGHT;
+        enemy.coor_x = 0, enemy.coor_y = MAP_HEIGHT - 1;
         break;
     }
     default:

@@ -432,12 +432,12 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
                 enemy_cnt++;
             }
 
-            // if (game_controller->diff > 1)
-            // {
-            //     InitEnemy(game_controller, 2, *diff + 1);
-            //     InitEnemy(game_controller, 3, *diff + 1);
-            //     enemy_cnt += 2;
-            // }
+            if (game_controller->diff > 1)
+            {
+                InitEnemy(game_controller, 2, *diff + 1);
+                InitEnemy(game_controller, 3, *diff + 1);
+                enemy_cnt += 2;
+            }
         }
 
         if (game_controller->cancel_attack_timer == CANCEL_ATTACK_TIMER)
