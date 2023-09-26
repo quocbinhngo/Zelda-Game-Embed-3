@@ -127,12 +127,12 @@ void DrawPlayer(GameController *game_controller, int player_mode)
     {
     case NORMAL_MODE:
     {
-        drawImage(game_controller->player.coor_x * TILE_SIZE, game_controller->player.coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, player_image_allArray[game_controller->player.dir]);
+        drawCharacterImage(game_controller->player.coor_x * TILE_SIZE, game_controller->player.coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, player_image_allArray[game_controller->player.dir]);
         break;
     }
     case ATTACK_MODE:
     {
-        drawImage(game_controller->player.coor_x * TILE_SIZE, game_controller->player.coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, player_attack_image_allArray[game_controller->player.dir]);
+        drawCharacterImage(game_controller->player.coor_x * TILE_SIZE, game_controller->player.coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, player_attack_image_allArray[game_controller->player.dir]);
         break;
     }
 
@@ -211,10 +211,10 @@ void MovePlayer(GameController *game_controller, char input)
     }
 }
 
-void InitEnemy(GameController *game_controller, int position)
+void InitEnemy(GameController *game_controller, int position, int id)
 {
     Enemy enemy;
-
+    enemy.id = id;
     // uart_puts("Ptr enemy: ");
     // uart_hex(&enemy);
     // uart_puts("\n");
@@ -257,8 +257,10 @@ void InitEnemy(GameController *game_controller, int position)
 
 void DrawEnemy(GameController *game_controller, Enemy *enemy)
 {
+ 
+
     (game_controller->game_map)[enemy->coor_y][enemy->coor_x] = ENEMY_CODE;
-    drawImage(enemy->coor_x * TILE_SIZE, enemy->coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, enemy_image_1);
+    drawCharacterImage(enemy->coor_x * TILE_SIZE, enemy->coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, enemy_image_allArray[enemy->id-1]);
 }
 
 void EraseEnemy(GameController *game_controller, Enemy *enemy)
@@ -507,4 +509,30 @@ void DrawScore(GameController *game_controller)
     drawRectARGB32(GAME_WIDTH / 2 + 25, TILE_SIZE, GAME_WIDTH / 2 + 50, TILE_SIZE + 10, 0x00000000, 1);
     stringFont(GAME_WIDTH / 2 - 25, TILE_SIZE, "Score: ", 0x00ffffff, SMALL_FONT);
     stringFont(GAME_WIDTH / 2 + 25, TILE_SIZE, score, 0x00ffffff, SMALL_FONT);
+}
+
+
+void DrawGameOver(GameController *game_controller)
+{
+    
+
+    char temp_buffer[5], score[5];
+    int currentScore = game_controller->score, i = 4, j = 0;
+    do
+    {
+        temp_buffer[i] = (currentScore % 10) + '0';
+        i--;
+        currentScore /= 10;
+    } while (currentScore != 0);
+    for (i = i + 1; i < 5; i++)
+    {
+        score[j] = temp_buffer[i];
+        j++;
+    }
+    score[j] = 0;
+    drawRectARGB32(GAME_WIDTH / 4 , GAME_HEIGHT/4 , GAME_WIDTH *3 / 4 , GAME_HEIGHT*3/4 , 0x00000000, 1);
+    drawRectARGB32(GAME_WIDTH / 4 +2 , GAME_HEIGHT/4 +2, GAME_WIDTH *3 / 4 -2, GAME_HEIGHT*3/4 -2, 0xebb134, 1);
+
+    stringFont(GAME_WIDTH / 2 - 25, GAME_HEIGHT/2 - 50, "Score: ", 0x00ffffff, SMALL_FONT);
+    stringFont(GAME_WIDTH / 2 + 25, GAME_HEIGHT/2 - 50, score, 0x00ffffff, SMALL_FONT);
 }

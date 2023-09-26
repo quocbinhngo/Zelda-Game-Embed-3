@@ -420,7 +420,7 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
         // if (spawn_timer == (SPAWN_TIMER / (*diff + 1)) && index < NUM_EMEMIES)
         {
 
-            InitEnemy(game_controller, 0);
+            InitEnemy(game_controller, 0, *diff + 1);
             spawn_timer = 0;
             enemy_cnt++;
 
@@ -463,9 +463,13 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
 
         DrawHealthBar(game_controller);
         DrawScore(game_controller);
+
         wait_msec(50000);
         spawn_timer++;
     }
+
+    uart_puts("outside");
+    // DrawGameOver(game_controller);
 }
 
 // <<<<<<< HEAD

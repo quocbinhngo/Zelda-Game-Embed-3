@@ -54,7 +54,7 @@ void DrawEnemy(GameController *game_controller, Enemy *enemy);
 void EraseEnemy(GameController *game_controller, Enemy *enemy);
 void MoveEnemy(GameController *game_controller, Enemy *enemy);
 void EnemyAttack(GameController *game_controller);
-void InitEnemy(GameController *game_controller, int position);
+void InitEnemy(GameController *game_controller, int position, int id);
 void MoveEnemies(GameController *game_controller);
 // void InitEnemy(GameController *game_controller, Enemy *enemy);
 
@@ -65,4 +65,5 @@ void DrawHealthBar(GameController *game_controller);
 void DrawMap(int map_state);
 void ReDrawMap(int x_coordinate, int y_coordinate, int map_state);
 void DrawScore(GameController *game_controller);
+void DrawGameOver(GameController *game_controller);
 #endif
