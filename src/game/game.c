@@ -60,7 +60,7 @@ void game_mode()
         case GAME:
         {
             game_stage(&cur_stage, game_controller, &diff, &map, &start_game);
-            start_game = 0;
+            // start_game = 0;
             break;
         }
         case EXIT:

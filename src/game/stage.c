@@ -156,8 +156,6 @@ void setting_stage(stage *option, stage *main, int *map)
     DrawMap(*map);
     int cont_loop = 1;
 
-    stringFont(500, 40, "Settings: ", PRIMARY_COLOR, LARGE_FONT);
-
     stage choices[] = {DIFF, MAP, MENU};
     int choice_index = 0;
     *option = DIFF;
@@ -392,7 +390,6 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
     game_controller->diff = *diff;
 
     DrawMap(*map);
-
 
     if (*start_game)
     {

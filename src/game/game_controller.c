@@ -65,6 +65,7 @@ void StartGame(GameController *game_controller, int *map)
 void ResumeGame(GameController *game_controller, int *map)
 {
     DrawPlayer(game_controller, NORMAL_MODE);
+    InitObstacleGameMap(game_controller);
 }
 
 void ClearGameMap(GameController *game_controller)
