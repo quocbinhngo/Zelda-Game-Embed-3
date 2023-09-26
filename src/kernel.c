@@ -6,7 +6,7 @@
 #include "font/font.h"
 #include "game/game.h"
 
-#define feature 2
+#define feature 4
 
 void main()
 {

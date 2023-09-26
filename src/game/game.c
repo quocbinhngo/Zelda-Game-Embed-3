@@ -5,6 +5,8 @@
 #include "game_const.h"
 #include "../uart.h"
 #include "game.h"
+#include "game_controller.h"
+#include "../framebf.h"
 
 // #define VIR_GAME_WIDTH 1280
 // #define VIR_GAME_HEIGHT 720
@@ -21,8 +23,11 @@ void game_mode()
     stage option = GAME;
 
     int cont_loop = 1;
-    int map_state = GRASS_MAP;
     int diff = 0, map = 0;
+
+    GameController game_controller_obj;
+    GameController *game_controller = &game_controller_obj;
+    int start_game = 1;
 
     while (cont_loop)
     {
@@ -52,12 +57,18 @@ void game_mode()
         }
         case GAME:
         {
-            game_stage(&cur_stage, &diff, &map);
+            game_stage(&cur_stage, game_controller, &diff, &map, &start_game);
+            start_game = 0;
             break;
         }
         case EXIT:
         {
             cont_loop = 0;
+            break;
+        }
+        case PAUSE:
+        {
+            pause_stage(&cur_stage, &map, & start_game);
             break;
         }
         default:

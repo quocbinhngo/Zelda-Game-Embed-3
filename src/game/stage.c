@@ -127,18 +127,44 @@ void update_map_stage(stage *option)
     }
 }
 
+void update_pause_stage(int choice_index)
+{
+    draw_button(200, "Continue", 0);
+    draw_button(350, "Exit game", 0);
+
+    switch (choice_index)
+    {
+    case 0:
+    {
+        draw_button(200, "Continue", 1);
+        break;
+    }
+    case 1:
+    {
+        draw_button(350, "Exit game", 1);
+        break;
+    }
+    default:
+    {
+        break;
+    }
+    }
+}
+
 void setting_stage(stage *option, stage *main, int *map)
 {
     DrawMap(*map);
     int cont_loop = 1;
     
-    stringFont(500, 40, "Settings: ", BUTTON_PRIMARY_COLOR, LARGE_FONT);
+    stringFont(500, 40, "Settings: ", PRIMARY_COLOR, LARGE_FONT);
 
     stage choices[] = {DIFF, MAP, MENU};
     int choice_index = 0;
     *option = DIFF;
 
     update_setting_stage(option);
+
+    stringFont(450, 40, "Setting screen", PRIMARY_COLOR, LARGE_FONT);
 
     while (cont_loop)
     {
@@ -158,7 +184,7 @@ void setting_stage(stage *option, stage *main, int *map)
             choice_index = (choice_index + 1) % 3;
             break;
         }
-        case '\n':
+        case 'j':
         {
             *main = *option;
             cont_loop = 0;
@@ -185,26 +211,26 @@ void setting_stage(stage *option, stage *main, int *map)
 
 void menu_stage(stage *option, stage *main, int *diff, int *map)
 {
-    char *levelStr;
     DrawMap(*map);
 
-    stringFont(500, 40, "Level: ", BUTTON_PRIMARY_COLOR, LARGE_FONT);
+    stringFont(275, 40, "Menu Screen, Level: ", PRIMARY_COLOR, LARGE_FONT);
 
     switch (*diff)
     {
     case 0:
     {
-        stringFont(700, 40, "Easy", BUTTON_PRIMARY_COLOR, LARGE_FONT);
+        stringFont(888, 40, "Easy", PRIMARY_COLOR, LARGE_FONT);
         break;
     }
     case 1:
     {
-        stringFont(700, 40, "Medium", BUTTON_PRIMARY_COLOR, LARGE_FONT);
+        stringFont(888, 40, "Medium", PRIMARY_COLOR, LARGE_FONT);
+
         break;
     }
     case 2:
     {
-        stringFont(700, 40, "Hard", BUTTON_PRIMARY_COLOR, LARGE_FONT);
+        stringFont(888, 40, "Hard", PRIMARY_COLOR, LARGE_FONT);
         break;
     }
     default:
@@ -237,7 +263,7 @@ void menu_stage(stage *option, stage *main, int *diff, int *map)
             choice_index = (choice_index + 1) % 3;
             break;
         }
-        case '\n':
+        case 'j':
         {
             *main = *option;
             cont_loop = 0;
@@ -265,7 +291,7 @@ void map_stage(stage *option, stage *main, int *map)
     update_map_stage(option);
     int cont_loop = 1;
 
-    stringFont(350, 40, "Choose a game map: ", BUTTON_PRIMARY_COLOR, LARGE_FONT);
+    stringFont(350, 40, "Choose a game map: ", PRIMARY_COLOR, LARGE_FONT);
     stage choices[] = {0, 1, 2};
     int choice_index = 0;
 
@@ -287,7 +313,7 @@ void map_stage(stage *option, stage *main, int *map)
             choice_index = (choice_index + 1) % 3;
             break;
         }
-        case '\n':
+        case 'j':
         {
             *map = *option;
             cont_loop = 0;
@@ -313,8 +339,10 @@ void diff_stage(stage *option, stage *main, int *diff, int *map)
 {
     DrawMap(*map);
 
-    stringFont(350, 40, "Choose a difficulty: ", BUTTON_PRIMARY_COLOR, LARGE_FONT);
+    stringFont(350, 40, "Choose a difficulty: ", PRIMARY_COLOR, LARGE_FONT);
     update_diff_stage(diff);
+
+    stringFont(250, 40, "Choose a difficulty level", PRIMARY_COLOR, LARGE_FONT);
 
     int cont_loop = 1;
 
@@ -338,7 +366,7 @@ void diff_stage(stage *option, stage *main, int *diff, int *map)
             *diff = (*diff + 1) % 3;
             break;
         }
-        case '\n':
+        case 'j':
         {
             cont_loop = 0;
             *main = MENU;
@@ -359,38 +387,45 @@ void diff_stage(stage *option, stage *main, int *diff, int *map)
     DrawMap(*map);
 }
 
-void game_stage(stage *main, int *diff, int *map)
+void game_stage(stage *main, GameController *game_controller, int *diff, int *map, int *start_game)
 {
-    GameController game_controller_obj;
-    game_controller_obj.diff = *diff;
-    GameController *game_controller = &game_controller_obj;
+    game_controller->diff = *diff;
 
     DrawMap(*map);
-    StartGame(game_controller, *map);
 
-    int enemy_movement_timer = 0;
+    if (*start_game)
+    {
+        StartGame(game_controller, map);
+        *start_game = 0;
+    }
+    else
+    {
+        ResumeGame(game_controller, map);
+    }
+
     int spawn_timer = 0;
     int enemy_cnt = 0;
 
     while (1)
     {
-
         char input = getUart();
-
-        if (!game_controller->is_game_active && IsExitGameInput(input))
-        {
-        }
 
         if (!game_controller->is_game_active)
         {
-            continue;
+            break;
+        }
+
+        if (IsPauseInput(input))
+        {
+            *main = PAUSE;
+            return;
         }
 
         if (spawn_timer == (SPAWN_TIMER / (*diff + 1)) && enemy_cnt < NUM_EMEMIES)
         // if (spawn_timer == (SPAWN_TIMER / (*diff + 1)) && index < NUM_EMEMIES)
         {
 
-            InitEnemy(game_controller, 0);
+            InitEnemy(game_controller, 0, *diff + 1);
             spawn_timer = 0;
             enemy_cnt++;
 
@@ -409,6 +444,16 @@ void game_stage(stage *main, int *diff, int *map)
             // }
         }
 
+        if (game_controller->cancel_attack_timer == CANCEL_ATTACK_TIMER)
+        {
+            game_controller->cancel_attack_timer = 0;
+            CancelAttack(game_controller);
+        }
+        else if (game_controller->cancel_attack_timer)
+        {
+            game_controller->cancel_attack_timer++;
+        }
+
         if (IsMoveInput(input))
         {
             MovePlayer(game_controller, input);
@@ -416,6 +461,10 @@ void game_stage(stage *main, int *diff, int *map)
         else if (IsAttackInput(input))
         {
             PlayerAttack(game_controller);
+        } 
+        else if (IsWeaponInput(input))
+        {
+            ChangeWeapon(game_controller);
         }
 
         // MoveEnemy(game_controller, &game_controller->enemy_list.enemies[0]);
@@ -423,9 +472,13 @@ void game_stage(stage *main, int *diff, int *map)
 
         DrawHealthBar(game_controller);
         DrawScore(game_controller);
+
         wait_msec(50000);
         spawn_timer++;
     }
+
+    uart_puts("outside");
+    // DrawGameOver(game_controller);
 }
 
 // <<<<<<< HEAD
@@ -486,3 +539,72 @@ void game_stage(stage *main, int *diff, int *map)
 //     unsigned int **res_data;
 //     mbox_buffer_setup(mBuf, MBOX_TAG_SETVIRTOFF, res_data, 0, 2, offset_x, offset_y);
 // }
+
+void pause_stage(stage *main, int *map, int *start_game)
+{
+    DrawMap(*map);
+    stringFont(500, 40, "PAUSE GAME", PRIMARY_COLOR, LARGE_FONT);
+
+    int cont_loop = 1;
+
+    stage choices[] = {GAME, MENU};
+    int choice_index = 0;
+
+    update_pause_stage(choice_index);
+
+    while (cont_loop)
+    {
+        char key = getUart();
+
+        int previous = choice_index;
+
+        switch (key)
+        {
+        case 'w':
+        {
+            choice_index = (choice_index - 1 + 2) % 2;
+            break;
+        }
+        case 's':
+        {
+            choice_index = (choice_index + 1) % 2;
+            break;
+        }
+        case 'j':
+        {
+            *main = choices[choice_index];
+            cont_loop = 0;
+            break;
+        }
+        default:
+        {
+            break;
+        }
+        }
+
+        if (choice_index != previous)
+        {
+            update_pause_stage(choice_index);
+        }
+    }
+
+    switch (*main)
+    {
+    case GAME:
+    {
+        *start_game = 0;
+        break;
+    }
+    case MENU:
+    {
+        *start_game = 1;
+        break;
+    }
+    default:
+    {
+        break;
+    }
+    }
+
+    DrawMap(*map);
+}

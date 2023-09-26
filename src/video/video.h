@@ -3,8 +3,8 @@
 
 #define VID_HEIGHT 240
 #define VID_WIDTH 320
-#define SCREEN_WIDTH 320
-#define SCREEN_HEIGHT 240
+#define VID_SCREEN_WIDTH 320
+#define VID_SCREEN_HEIGHT 240
 #define NUM_FRAMES 45
 
 void video_mode();

@@ -7,6 +7,7 @@
 #include "player.h"
 #include "../uart.h"
 #include "../font/font.h"
+#include "../framebf.h"
 
 int IsMoveInput(char c)
 {
@@ -33,15 +34,34 @@ int IsAttackInput(char c)
     return c == 'j';
 }
 
-//Check if input is space
-int IsExitGameInput(char key) { return key == ' '; }
+int IsWeaponInput(char c)
+{
+    //Check if input is k
+    return c == 'k';
+}
+
+int IsExitGameInput(char key) { return key == 'j'; }
+
+int IsPauseInput(char c)
+{
+    // escape key
+    return c == 27;
+}
 
 void StartGame(GameController *game_controller, int *map)
 {
     game_controller->is_game_active = 1;
-    game_controller->map = map;
+    game_controller->map = *map;
+
     ClearGameMap(game_controller);
     InitPlayer(game_controller);
+
+    game_controller->enemy_list.num_enemies = 0;
+}
+
+void ResumeGame(GameController *game_controller, int *map)
+{
+    DrawPlayer(game_controller, NORMAL_MODE);
 }
 
 void ClearGameMap(GameController *game_controller)
@@ -56,6 +76,24 @@ void ClearGameMap(GameController *game_controller)
     }
 }
 
+void PrintGameMap(GameController *game_controller)
+{
+    for (int i = 0; i < MAP_HEIGHT; i++)
+    {
+        for (int j = 0; j < MAP_WIDTH; j++)
+        {
+            uart_dec((game_controller->game_map)[i][j]);
+            uart_puts(" ");
+        }
+        uart_puts("\n");
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        uart_puts("\n");
+    }
+}
+
 void InitPlayer(GameController *game_controller)
 {
     Player player;
@@ -65,6 +103,7 @@ void InitPlayer(GameController *game_controller)
     player.hp = MAX_HP;
 
     game_controller->player = player;
+    game_controller->weapon = 0;
     DrawPlayer(game_controller, NORMAL_MODE);
 
     // drawRectARGB32(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH / 2 + TILE_SIZE, GAME_HEIGHT / 2 + TILE_SIZE, 0xffffff, 1);
@@ -72,20 +111,25 @@ void InitPlayer(GameController *game_controller)
 
 void DrawPlayer(GameController *game_controller, int player_mode)
 {
-
     // Player* player = game_controller->player;
-    (game_controller->game_map)[game_controller->player.coor_x][game_controller->player.coor_y] = PLAYER_CODE;
+    uart_puts("Player coor: ");
+    uart_dec(game_controller->player.coor_x);
+    uart_puts(" ");
+    uart_dec(game_controller->player.coor_y);
+    uart_puts("\n\n");
+
+    (game_controller->game_map)[game_controller->player.coor_y][game_controller->player.coor_x] = PLAYER_CODE;
 
     switch (player_mode)
     {
     case NORMAL_MODE:
     {
-        drawImage(game_controller->player.coor_x * TILE_SIZE, game_controller->player.coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, player_image_allArray[game_controller->player.dir]);
+        drawCharacterImage(game_controller->player.coor_x * TILE_SIZE, game_controller->player.coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, player_image_allArray[game_controller->player.dir]);
         break;
     }
     case ATTACK_MODE:
     {
-        drawImage(game_controller->player.coor_x * TILE_SIZE, game_controller->player.coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, player_attack_image_allArray[game_controller->player.dir]);
+        drawCharacterImage(game_controller->player.coor_x * TILE_SIZE, game_controller->player.coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, player_attack_image_allArray[game_controller->player.dir]);
         break;
     }
 
@@ -99,14 +143,13 @@ void DrawPlayer(GameController *game_controller, int player_mode)
 void ErasePlayer(GameController *game_controller)
 {
     // Player* player = game_controller->player;
-    (game_controller->game_map)[game_controller->player.coor_x][game_controller->player.coor_y] = BLANK_CODE;
+    (game_controller->game_map)[game_controller->player.coor_y][game_controller->player.coor_x] = BLANK_CODE;
     ReDrawMap(game_controller->player.coor_x, game_controller->player.coor_y, game_controller->map);
 }
 
 void MovePlayer(GameController *game_controller, char input)
 {
     Player *player = &game_controller->player;
-    int has = 0;
 
     // ErasePlayer(game_controller, player);
 
@@ -116,28 +159,24 @@ void MovePlayer(GameController *game_controller, char input)
     {
     case 'w':
     {
-        has = 1;
         new_y = (player->coor_y - PLAYER_SPEED) >= 0 ? player->coor_y - PLAYER_SPEED : 0;
         player->dir = UP;
         break;
     }
     case 'a':
     {
-        has = 1;
         new_x = (player->coor_x - PLAYER_SPEED) >= 0 ? player->coor_x - PLAYER_SPEED : 0;
         player->dir = LEFT;
         break;
     }
     case 's':
     {
-        has = 1;
         new_y = (player->coor_y + PLAYER_SPEED) < MAP_HEIGHT ? player->coor_y + PLAYER_SPEED : MAP_HEIGHT - PLAYER_SPEED;
         player->dir = DOWN;
         break;
     }
     case 'd':
     {
-        has = 1;
         new_x = (player->coor_x + PLAYER_SPEED) < MAP_WIDTH ? player->coor_x + PLAYER_SPEED : MAP_WIDTH - PLAYER_SPEED;
         player->dir = RIGHT;
         break;
@@ -146,7 +185,7 @@ void MovePlayer(GameController *game_controller, char input)
         break;
     }
 
-    switch ((game_controller->game_map)[new_x][new_y])
+    switch ((game_controller->game_map)[new_y][new_x])
     {
     case BLANK_CODE:
     {
@@ -169,30 +208,45 @@ void MovePlayer(GameController *game_controller, char input)
     }
 }
 
-void InitEnemy(GameController *game_controller, int position)
+void ChangeWeapon(GameController *game_controller){
+    game_controller->weapon = (game_controller->weapon + 1) % 3;
+}
+
+void InitEnemy(GameController *game_controller, int position, int id)
 {
     Enemy enemy;
-
-    uart_puts("Ptr enemy: ");
-    uart_hex(&enemy);
-    uart_puts("\n");
+    enemy.id = id;
+    // uart_puts("Ptr enemy: ");
+    // uart_hex(&enemy);
+    // uart_puts("\n");
 
     switch (position)
     {
     case 0:
+    {
         enemy.coor_x = 0, enemy.coor_y = 0;
         break;
+    }
     case 1:
+    {
         enemy.coor_x = MAP_WIDTH, enemy.coor_y = 0;
         break;
+    }
     case 2:
+    {
         enemy.coor_x = MAP_WIDTH, enemy.coor_y = MAP_HEIGHT;
         break;
+    }
     case 3:
+    {
         enemy.coor_x = 0, enemy.coor_y = MAP_HEIGHT;
         break;
+    }
     default:
+    {
+        enemy.coor_x = 0, enemy.coor_y = 0;
         break;
+    }
     }
 
     game_controller->game_map[enemy.coor_y][enemy.coor_x] = 2;
@@ -204,14 +258,14 @@ void InitEnemy(GameController *game_controller, int position)
 
 void DrawEnemy(GameController *game_controller, Enemy *enemy)
 {
-    (game_controller->game_map)[enemy->coor_x][enemy->coor_y] = ENEMY_CODE;
-    drawImage(enemy->coor_x * TILE_SIZE, enemy->coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, enemy_image_1);
+
+    (game_controller->game_map)[enemy->coor_y][enemy->coor_x] = ENEMY_CODE;
+    drawCharacterImage(enemy->coor_x * TILE_SIZE, enemy->coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, enemy_image_allArray[enemy->id - 1]);
 }
 
 void EraseEnemy(GameController *game_controller, Enemy *enemy)
 {
-    (game_controller->game_map)[enemy->coor_x][enemy->coor_y] = BLANK_CODE;
-
+    (game_controller->game_map)[enemy->coor_y][enemy->coor_x] = BLANK_CODE;
     ReDrawMap(enemy->coor_x, enemy->coor_y, game_controller->map);
 }
 
@@ -226,9 +280,6 @@ void MoveEnemy(GameController *game_controller, Enemy *enemy)
     {
         return;
     }
-
-    uart_puts("move cnt\n");
-    uart_dec(enemy->moveCount);
 
     enemy->moveCount = 0;
 
@@ -271,7 +322,7 @@ void MoveEnemy(GameController *game_controller, Enemy *enemy)
         new_y = (direct_y > 0) ? enemy->coor_y - ENEMY_SPEED : enemy->coor_y + ENEMY_SPEED;
     }
 
-    switch ((game_controller->game_map)[new_x][new_y])
+    switch ((game_controller->game_map)[new_y][new_x])
     {
     case BLANK_CODE:
     {
@@ -303,7 +354,7 @@ void EnemyAttack(GameController *game_controller)
         return;
     }
 
-    game_controller->game_map[player->coor_x][player->coor_y] = BLANK_CODE;
+    game_controller->game_map[player->coor_y][player->coor_x] = BLANK_CODE;
     game_controller->is_game_active = 0;
     ErasePlayer(game_controller);
 }
@@ -376,20 +427,21 @@ void PlayerAttack(GameController *game_controller)
     }
 
     DrawWeapon(game_controller);
+    game_controller->cancel_attack_timer++;
+}
 
-    // cancel danh animation
-    // for (int i = 0; i < 1e9; i++) {
-    // }
-
-    // ErasePlayer(game_controller);
-    // DrawPlayer(game_controller, NORMAL_MODE);
+void CancelAttack(GameController *game_controller)
+{
+    ErasePlayer(game_controller);
+    EraseWeapon(game_controller);
+    DrawPlayer(game_controller, NORMAL_MODE);
 }
 
 void MoveEnemies(GameController *game_controller)
 {
     for (int i = 0; i < game_controller->enemy_list.num_enemies; i++)
     {
-        Enemy *enemy = &game_controller->enemy_list.enemies[i];
+        Enemy *enemy = &(game_controller->enemy_list.enemies[i]);
         if (!enemy->active)
         {
             continue;
@@ -401,7 +453,7 @@ void MoveEnemies(GameController *game_controller)
 
 void DrawWeapon(GameController *game_controller)
 {
-    drawImage(game_controller->weapon_x * TILE_SIZE, game_controller->weapon_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, weapon_image_allArray[0]);
+    drawCharacterImage(game_controller->weapon_x * TILE_SIZE, game_controller->weapon_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, weapon_image_allArray[game_controller->weapon]);
 }
 
 void EraseWeapon(GameController *game_controller)
@@ -439,7 +491,7 @@ void ReDrawMap(int x_coordinate, int y_coordinate, int map_state)
 }
 
 void DrawScore(GameController *game_controller)
-{   
+{
     char temp_buffer[5], score[5];
     int currentScore = game_controller->score, i = 4, j = 0;
     do
@@ -454,21 +506,57 @@ void DrawScore(GameController *game_controller)
         j++;
     }
     score[j] = 0;
-    stringFont((MAP_WIDTH / 2 - 5)*TILE_SIZE, TILE_SIZE, "Score: ", 0x00ffffff, LARGE_FONT);
-    if(game_controller->game_map[MAP_WIDTH / 2 + 2][1] != PLAYER_CODE){
+
+    stringFont((MAP_WIDTH / 2 - 5) * TILE_SIZE, TILE_SIZE, "Score: ", 0x00ffffff, LARGE_FONT);
+    if (game_controller->game_map[1][MAP_WIDTH / 2 + 2] != PLAYER_CODE)
+    {
         ReDrawMap(MAP_WIDTH / 2 + 2, 1, game_controller->map);
     }
-    if(game_controller->game_map[MAP_WIDTH / 2 + 3][1] != PLAYER_CODE){
+    if (game_controller->game_map[1][MAP_WIDTH / 2 + 3] != PLAYER_CODE)
+    {
         ReDrawMap(MAP_WIDTH / 2 + 3, 1, game_controller->map);
     }
-    if(game_controller->game_map[MAP_WIDTH / 2 + 2][2] != PLAYER_CODE){
+    if (game_controller->game_map[1][MAP_WIDTH / 2 + 4] != PLAYER_CODE)
+    {
+        ReDrawMap(MAP_WIDTH / 2 + 4, 1, game_controller->map);
+    }
+    if (game_controller->game_map[2][MAP_WIDTH / 2 + 2] != PLAYER_CODE)
+    {
         ReDrawMap(MAP_WIDTH / 2 + 2, 2, game_controller->map);
     }
-    if(game_controller->game_map[MAP_WIDTH / 2 + 3][2] != PLAYER_CODE){
+    if (game_controller->game_map[2][MAP_WIDTH / 2 + 3] != PLAYER_CODE)
+    {
         ReDrawMap(MAP_WIDTH / 2 + 3, 2, game_controller->map);
     }
+    if (game_controller->game_map[2][MAP_WIDTH / 2 + 4] != PLAYER_CODE)
+    {
+        ReDrawMap(MAP_WIDTH / 2 + 4, 2, game_controller->map);
+    }
     
-    
-    
-    stringFont((MAP_WIDTH / 2 + 2)*TILE_SIZE, TILE_SIZE, score, 0x00ffffff, LARGE_FONT);
+
+    stringFont((MAP_WIDTH / 2 + 2) * TILE_SIZE, TILE_SIZE, score, 0x00ffffff, LARGE_FONT);
+}
+
+void DrawGameOver(GameController *game_controller)
+{
+
+    char temp_buffer[5], score[5];
+    int currentScore = game_controller->score, i = 4, j = 0;
+    do
+    {
+        temp_buffer[i] = (currentScore % 10) + '0';
+        i--;
+        currentScore /= 10;
+    } while (currentScore != 0);
+    for (i = i + 1; i < 5; i++)
+    {
+        score[j] = temp_buffer[i];
+        j++;
+    }
+    score[j] = 0;
+    drawRectARGB32(GAME_WIDTH / 4, GAME_HEIGHT / 4, GAME_WIDTH * 3 / 4, GAME_HEIGHT * 3 / 4, 0x00000000, 1);
+    drawRectARGB32(GAME_WIDTH / 4 + 2, GAME_HEIGHT / 4 + 2, GAME_WIDTH * 3 / 4 - 2, GAME_HEIGHT * 3 / 4 - 2, 0xebb134, 1);
+
+    stringFont(GAME_WIDTH / 2 - 25, GAME_HEIGHT / 2 - 50, "Score: ", 0x00ffffff, SMALL_FONT);
+    stringFont(GAME_WIDTH / 2 + 25, GAME_HEIGHT / 2 - 50, score, 0x00ffffff, SMALL_FONT);
 }

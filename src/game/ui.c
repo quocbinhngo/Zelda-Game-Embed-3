@@ -11,11 +11,11 @@ void draw_button(int offsetY, char *string, int is_primary)
         background_color;
     if (is_primary)
     {
-        text_color = BUTTON_SECONDARY_COLOR, background_color = BUTTON_PRIMARY_COLOR;
+        text_color = SECONDARY_COLOR, background_color = PRIMARY_COLOR;
     }
     else
     {
-        text_color = BUTTON_PRIMARY_COLOR, background_color = BUTTON_SECONDARY_COLOR;
+        text_color = PRIMARY_COLOR, background_color = SECONDARY_COLOR;
     }
 
     drawRectARGB32(offsetX, offsetY, offsetX + BUTTON_WIDTH, offsetY + BUTTON_HEIGHT, background_color, 1);

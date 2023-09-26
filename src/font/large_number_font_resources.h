@@ -1,5 +1,5 @@
-#ifndef _LARGE_NUMBER_FONT_RESOURCES.H
-#define _LARGE_NUMBER_FONT_RESOURCES
+#ifndef _LARGE_NUMBER_FONT_RESOURCES_H
+#define _LARGE_NUMBER_FONT_RESOURCES_H
 
 static const int number_img_width[10] = {
     33, 16, 27, 29, 32, 28, 29, 27, 29, 29};
