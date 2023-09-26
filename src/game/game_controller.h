@@ -33,7 +33,7 @@ void StartGame(GameController *game_controller, int *map);
 void ResumeGame(GameController *game_controller, int *map);
 
 //Function to clear the game map
-void ClearGameMap(GameController *game_controller);
+void ClearGameMap(GameController *game_controller, int *map);
 
 //Function to print the game map
 void PrintGameMap(GameController *game_controller);
