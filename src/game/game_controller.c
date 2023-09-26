@@ -8,6 +8,7 @@
 #include "../uart.h"
 #include "../font/font.h"
 #include "../framebf.h"
+#include "resources/enemy_attack.h"
 
 int IsMoveInput(char c)
 {
@@ -202,7 +203,16 @@ void MovePlayer(GameController *game_controller, char input)
     case ENEMY_CODE:
     {
         DrawPlayer(game_controller, NORMAL_MODE);
-        EnemyAttack(game_controller);
+
+        // for (int i = 0; i < game_controller->enemy_list.num_enemies; i++)
+        // {
+        //     Enemy *cur_enemy = &(game_controller->enemy_list.enemies[i]);
+        //     if (cur_enemy->coor_x == new_x && cur_enemy->coor_y == new_y)
+        //     {
+        //         EnemyAttack(game_controller, cur_enemy);
+        //         break;
+        //     }
+        // }
     }
     default:
     {
@@ -259,7 +269,15 @@ void DrawEnemy(GameController *game_controller, Enemy *enemy)
 {
 
     (game_controller->game_map)[enemy->coor_y][enemy->coor_x] = ENEMY_CODE;
-    drawCharacterImage(enemy->coor_x * TILE_SIZE, enemy->coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, enemy_image_allArray[enemy->id - 1]);
+
+    if (enemy->is_attack)
+    {
+        drawCharacterImage(enemy->coor_x * TILE_SIZE, enemy->coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, enemy_attack_image_allArray[enemy->id - 1]);
+    }
+    else
+    {
+        drawCharacterImage(enemy->coor_x * TILE_SIZE, enemy->coor_y * TILE_SIZE, TILE_SIZE, TILE_SIZE, enemy_image_allArray[enemy->id - 1]);
+    }
 }
 
 void EraseEnemy(GameController *game_controller, Enemy *enemy)
@@ -333,7 +351,7 @@ void MoveEnemy(GameController *game_controller, Enemy *enemy)
     }
     case PLAYER_CODE:
     {
-        EnemyAttack(game_controller);
+        EnemyAttack(game_controller, enemy);
         break;
     }
     default:
@@ -343,8 +361,12 @@ void MoveEnemy(GameController *game_controller, Enemy *enemy)
     }
 }
 
-void EnemyAttack(GameController *game_controller)
+void EnemyAttack(GameController *game_controller, Enemy *enemy)
 {
+    EraseEnemy(game_controller, enemy);
+    enemy->is_attack = 1;
+    DrawEnemy(game_controller, enemy);
+
     Player *player = &game_controller->player;
     player->hp -= 10;
 
@@ -549,4 +571,26 @@ void DrawGameOver(GameController *game_controller)
 
     stringFont(GAME_WIDTH / 2 - 25, GAME_HEIGHT / 2 - 50, "Score: ", 0x00ffffff, SMALL_FONT);
     stringFont(GAME_WIDTH / 2 + 25, GAME_HEIGHT / 2 - 50, score, 0x00ffffff, SMALL_FONT);
+}
+
+void CancelEnemyAttack(GameController *game_controller)
+{
+    for (int i = 0; i < game_controller->enemy_list.num_enemies; i++)
+    {
+        Enemy *enemy = &(game_controller->enemy_list.enemies[i]);
+        if (enemy->is_attack == 0)
+        {
+            continue;
+        }
+
+        if (enemy->is_attack < 15)
+        {
+            enemy->is_attack++;
+            continue;
+        }
+
+        enemy->is_attack = 0;
+        EraseEnemy(game_controller, enemy);
+        DrawEnemy(game_controller, enemy);
+    }
 }

@@ -53,9 +53,10 @@ void CancelAttack(GameController *game_controller);
 void DrawEnemy(GameController *game_controller, Enemy *enemy);
 void EraseEnemy(GameController *game_controller, Enemy *enemy);
 void MoveEnemy(GameController *game_controller, Enemy *enemy);
-void EnemyAttack(GameController *game_controller);
+void EnemyAttack(GameController *game_controller, Enemy *enemy);
 void InitEnemy(GameController *game_controller, int position, int id);
 void MoveEnemies(GameController *game_controller);
+void CancelEnemyAttack(GameController *game_controller);
 // void InitEnemy(GameController *game_controller, Enemy *enemy);
 
 void DrawWeapon(GameController *game_controller);

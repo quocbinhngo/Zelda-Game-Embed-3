@@ -465,6 +465,7 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
 
         // MoveEnemy(game_controller, &game_controller->enemy_list.enemies[0]);
         MoveEnemies(game_controller);
+        CancelEnemyAttack(game_controller);
 
         DrawHealthBar(game_controller);
         DrawScore(game_controller);
