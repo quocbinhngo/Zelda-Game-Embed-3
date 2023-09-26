@@ -99,20 +99,20 @@ void update_setting_stage(stage *option)
 
 void update_map_stage(stage *option)
 {
-    draw_button(100, "Grass", 0);
-    draw_button(300, "Desert", 0);
+    draw_button(200, "Grass", 0);
+    draw_button(350, "Desert", 0);
     draw_button(500, "Dungeon", 0);
 
     switch (*option)
     {
     case 0:
     {
-        draw_button(100, "Grass", 1);
+        draw_button(200, "Grass", 1);
         break;
     }
     case 1:
     {
-        draw_button(300, "Desert", 1);
+        draw_button(350, "Desert", 1);
         break;
     }
     case 2:
@@ -155,6 +155,8 @@ void setting_stage(stage *option, stage *main, int *map)
 {
     DrawMap(*map);
     int cont_loop = 1;
+    
+    stringFont(500, 40, "Settings: ", PRIMARY_COLOR, LARGE_FONT);
 
     stage choices[] = {DIFF, MAP, MENU};
     int choice_index = 0;
@@ -289,6 +291,7 @@ void map_stage(stage *option, stage *main, int *map)
     update_map_stage(option);
     int cont_loop = 1;
 
+    stringFont(350, 40, "Choose a game map: ", PRIMARY_COLOR, LARGE_FONT);
     stage choices[] = {0, 1, 2};
     int choice_index = 0;
 
@@ -335,6 +338,8 @@ void map_stage(stage *option, stage *main, int *map)
 void diff_stage(stage *option, stage *main, int *diff, int *map)
 {
     DrawMap(*map);
+
+    stringFont(350, 40, "Choose a difficulty: ", PRIMARY_COLOR, LARGE_FONT);
     update_diff_stage(diff);
 
     stringFont(250, 40, "Choose a difficulty level", PRIMARY_COLOR, LARGE_FONT);
