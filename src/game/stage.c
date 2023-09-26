@@ -445,7 +445,7 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
         uart_puts("Cancel attack: ");
         uart_dec(game_controller->cancel_attack_timer);
         uart_puts("\n");
-
+        
         if (game_controller->cancel_attack_timer == CANCEL_ATTACK_TIMER)
         {
             game_controller->cancel_attack_timer = 0;

@@ -115,7 +115,9 @@ void ReDrawMap(int x_coordinate, int y_coordinate, int map_state);
 // Function to display the player's score
 void DrawScore(GameController *game_controller);
 
+// Function to display game over screen
 void DrawGameOver(GameController *game_controller);
 
-
+// Function to draw obstacle to the screen
+void DrawObstacle(GameController *game_controller);
 #endif
