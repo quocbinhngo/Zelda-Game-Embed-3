@@ -70,16 +70,6 @@ void PlayerAttack(GameController *GameController);
 //Function that player character call to cancel an attack
 void CancelAttack(GameController *game_controller);
 
-// <<<<<<< HEAD
-// // >>>>>>> e223fbe58205e9d34ddaeba41ca0db18ada116ff
-// void DrawEnemy(GameController *game_controller, Enemy *enemy);
-// void EraseEnemy(GameController *game_controller, Enemy *enemy);
-// void MoveEnemy(GameController *game_controller, Enemy *enemy);
-// void EnemyAttack(GameController *game_controller, Enemy *enemy);
-// void InitEnemy(GameController *game_controller, int position, int id);
-// void MoveEnemies(GameController *game_controller);
-// // void InitEnemy(GameController *game_controller, Enemy *enemy);
-// =======
 
 //Function to initialize a new enemy
 void InitEnemy(GameController *game_controller, int position, int id);
@@ -114,6 +104,7 @@ void EraseWeapon(GameController *GameController);
 void ChangeWeapon(GameController *game_controller);
 
 
+
 //Function to draw the player's health bar
 void DrawHealthBar(GameController *game_controller);
 
@@ -125,7 +116,10 @@ void ReDrawMap(int x_coordinate, int y_coordinate, int map_state);
 
 //Function to display the player's score
 void DrawScore(GameController *game_controller);
+
+//Function to display game over screen
 void DrawGameOver(GameController *game_controller);
 
+//Function to draw obstacle to the screen
 void DrawObstacle(GameController *game_controller);
 #endif
