@@ -405,6 +405,8 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
     while (1)
     {
 
+       
+        uart_puts("inside");
         if (print_map_cnt == 50)
         {
             PrintGameMap(game_controller);
@@ -461,10 +463,20 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
 
         DrawHealthBar(game_controller);
         DrawScore(game_controller);
+
+        
+
         wait_msec(50000);
         spawn_timer++;
         print_map_cnt++;
     }
+
+
+    uart_puts("outside");
+    //DrawGameOver(game_controller);
+
+
+
 }
 
 // <<<<<<< HEAD

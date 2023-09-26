@@ -62,4 +62,5 @@ void DrawHealthBar(GameController *game_controller);
 void DrawMap(int map_state);
 void ReDrawMap(int x_coordinate, int y_coordinate, int map_state);
 void DrawScore(GameController *game_controller);
+void DrawGameOver(GameController *game_controller);
 #endif

@@ -509,3 +509,29 @@ void DrawScore(GameController *game_controller)
     stringFont(GAME_WIDTH / 2 - 25, TILE_SIZE, "Score: ", 0x00ffffff, SMALL_FONT);
     stringFont(GAME_WIDTH / 2 + 25, TILE_SIZE, score, 0x00ffffff, SMALL_FONT);
 }
+
+
+void DrawGameOver(GameController *game_controller)
+{
+    
+
+    char temp_buffer[5], score[5];
+    int currentScore = game_controller->score, i = 4, j = 0;
+    do
+    {
+        temp_buffer[i] = (currentScore % 10) + '0';
+        i--;
+        currentScore /= 10;
+    } while (currentScore != 0);
+    for (i = i + 1; i < 5; i++)
+    {
+        score[j] = temp_buffer[i];
+        j++;
+    }
+    score[j] = 0;
+    drawRectARGB32(GAME_WIDTH / 4 , GAME_HEIGHT/4 , GAME_WIDTH *3 / 4 , GAME_HEIGHT*3/4 , 0x00000000, 1);
+    drawRectARGB32(GAME_WIDTH / 4 +2 , GAME_HEIGHT/4 +2, GAME_WIDTH *3 / 4 -2, GAME_HEIGHT*3/4 -2, 0xebb134, 1);
+
+    stringFont(GAME_WIDTH / 2 - 25, GAME_HEIGHT/2 - 50, "Score: ", 0x00ffffff, SMALL_FONT);
+    stringFont(GAME_WIDTH / 2 + 25, GAME_HEIGHT/2 - 50, score, 0x00ffffff, SMALL_FONT);
+}
