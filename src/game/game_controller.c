@@ -57,7 +57,7 @@ void StartGame(GameController *game_controller, int *map)
     game_controller->map = *map;
 
     ClearGameMap(game_controller, map);
-    //InitObstacleGameMap(game_controller);
+    // InitObstacleGameMap(game_controller);
     InitPlayer(game_controller);
 
     game_controller->enemy_list.num_enemies = 0;
@@ -67,13 +67,12 @@ void ResumeGame(GameController *game_controller, int *map)
 {
     DrawPlayer(game_controller, NORMAL_MODE);
     DrawObstacle(game_controller);
-    //InitObstacleGameMap(game_controller);
+    // InitObstacleGameMap(game_controller);
 }
 
 void ClearGameMap(GameController *game_controller, int *map)
 {
     game_controller->score = 0;
-
 
     for (int i = 0; i < MAP_HEIGHT; i++)
     {
@@ -84,7 +83,6 @@ void ClearGameMap(GameController *game_controller, int *map)
     }
 
     DrawObstacle(game_controller);
-    
 }
 
 void InitObstacleGameMap(GameController *game_controller)
@@ -119,7 +117,7 @@ void InitPlayer(GameController *game_controller)
 {
     Player player;
 
-    //Assign starting location and default values for player
+    // Assign starting location and default values for player
     player.coor_x = MAP_WIDTH / 2, player.coor_y = MAP_HEIGHT / 2;
     player.dir = DOWN;
     player.hp = MAX_HP;
@@ -142,7 +140,7 @@ void DrawPlayer(GameController *game_controller, int player_mode)
 
     (game_controller->game_map)[game_controller->player.coor_y][game_controller->player.coor_x] = PLAYER_CODE;
 
-    //Draw character sprite based on current player mode
+    // Draw character sprite based on current player mode
     switch (player_mode)
     {
     case NORMAL_MODE:
@@ -173,12 +171,9 @@ void ErasePlayer(GameController *game_controller)
 void MovePlayer(GameController *game_controller, char input)
 {
     Player *player = &game_controller->player;
-
-    // ErasePlayer(game_controller, player);
-
     int new_x = player->coor_x, new_y = player->coor_y;
 
-    //Calculate the player's new position based on the move input
+    // Calculate the player's new position based on the move input
     switch (input)
     {
     case 'w':
@@ -209,7 +204,7 @@ void MovePlayer(GameController *game_controller, char input)
         break;
     }
 
-    //Check if the new location is blank & move the player there if it is
+    // Check if the new location is blank & move the player there if it is
     switch ((game_controller->game_map)[new_y][new_x])
     {
     case BLANK_CODE:
@@ -221,23 +216,6 @@ void MovePlayer(GameController *game_controller, char input)
         DrawPlayer(game_controller, NORMAL_MODE);
         break;
     }
-    // case ENEMY_CODE:
-    // {
-    //     DrawPlayer(game_controller, NORMAL_MODE);
-
-    //     // for (int i = 0; i < game_controller->enemy_list.num_enemies; i++)
-    //     // {
-    //     //     Enemy *cur_enemy = &(game_controller->enemy_list.enemies[i]);
-    //     //     if (cur_enemy->coor_x == new_x && cur_enemy->coor_y == new_y)
-    //     //     {
-    //     //         EnemyAttack(game_controller, cur_enemy);
-    //     //         break;
-    //     //     }
-    //     // }
-    // }
-    // case 3:
-    // {
-    // }
     default:
     {
         break;
@@ -247,7 +225,7 @@ void MovePlayer(GameController *game_controller, char input)
 
 void ChangeWeapon(GameController *game_controller)
 {
-    //Cycle between 3 different weapons
+    // Cycle between 3 different weapons
     game_controller->weapon = (game_controller->weapon + 1) % 3;
 }
 
@@ -260,7 +238,7 @@ void InitEnemy(GameController *game_controller, int position, int id)
     // uart_hex(&enemy);
     // uart_puts("\n");
 
-    //Check which position the enemy will spawn in
+    // Check which position the enemy will spawn in
     switch (position)
     {
     case 0:
@@ -324,8 +302,8 @@ void MoveEnemy(GameController *game_controller, Enemy *enemy)
 
     enemy->moveCount++;
 
-    // if (enemy->moveCount < (MOVE_DELAY / (game_controller->diff + 1)))
     if (enemy->moveCount < (MOVE_DELAY / (game_controller->diff + 1)))
+    // if (enemy->moveCount < (MOVE_DELAY ))
     {
         return;
     }
@@ -335,7 +313,7 @@ void MoveEnemy(GameController *game_controller, Enemy *enemy)
     int diff_x, diff_y;
     int direct_x, direct_y;
 
-    //Calculate the direction towards the player
+    // Calculate the direction towards the player
     if (player->coor_x < enemy->coor_x)
     {
         diff_x = enemy->coor_x - player->coor_x;
@@ -363,10 +341,10 @@ void MoveEnemy(GameController *game_controller, Enemy *enemy)
     int new_x = enemy->coor_x, new_y = enemy->coor_y;
     int sub_new_x = enemy->coor_x, sub_new_y = enemy->coor_y;
 
-    //Move towards the direction between x and y with shorter distance
+    // Move towards the direction between x and y with shorter distance
     if (diff_x > diff_y)
     {
-        //move direction x
+        // move direction x
         new_x = (direct_x > 0) ? (enemy->coor_x - ENEMY_SPEED) : (enemy->coor_x + ENEMY_SPEED);
         sub_new_y = (direct_y > 0) ? enemy->coor_y - ENEMY_SPEED : enemy->coor_y + ENEMY_SPEED;
     }
@@ -377,12 +355,12 @@ void MoveEnemy(GameController *game_controller, Enemy *enemy)
         sub_new_x = (direct_x > 0) ? (enemy->coor_x - ENEMY_SPEED) : (enemy->coor_x + ENEMY_SPEED);
     }
 
-    //Check if the new enemy position is blank or has the player
+    // Check if the new enemy position is blank or has the player
     switch ((game_controller->game_map)[new_y][new_x])
     {
     case BLANK_CODE:
     {
-        //move to the new position if blank
+        // move to the new position if blank
         EraseEnemy(game_controller, enemy);
         enemy->coor_x = new_x, enemy->coor_y = new_y;
 
@@ -391,13 +369,14 @@ void MoveEnemy(GameController *game_controller, Enemy *enemy)
     }
     case PLAYER_CODE:
     {
-        //attack if encounter the player but stand still
+        // attack if encounter the player but stand still
         EnemyAttack(game_controller, enemy);
         break;
     }
     default:
     {
-        if ((game_controller->game_map)[sub_new_y][sub_new_x] == BLANK_CODE){
+        if ((game_controller->game_map)[sub_new_y][sub_new_x] == BLANK_CODE)
+        {
             EraseEnemy(game_controller, enemy);
             enemy->coor_x = sub_new_x, enemy->coor_y = sub_new_y;
 
@@ -410,13 +389,13 @@ void MoveEnemy(GameController *game_controller, Enemy *enemy)
 
 void EnemyAttack(GameController *game_controller, Enemy *enemy)
 {
-    //Draw enemy attack sprite
+    // Draw enemy attack sprite
     EraseEnemy(game_controller, enemy);
     enemy->is_attack = 1;
     DrawEnemy(game_controller, enemy);
 
     Player *player = &game_controller->player;
-    //Reduce player health
+    // Reduce player health
     player->hp -= 10;
 
     if (player->hp > 0)
@@ -424,7 +403,7 @@ void EnemyAttack(GameController *game_controller, Enemy *enemy)
         return;
     }
 
-    //If player health reaches 0 then erase player and end the game
+    // If player health reaches 0 then erase player and end the game
     game_controller->game_map[player->coor_y][player->coor_x] = BLANK_CODE;
     game_controller->is_game_active = 0;
     ErasePlayer(game_controller);
@@ -438,7 +417,7 @@ void PlayerAttack(GameController *game_controller)
     ErasePlayer(game_controller);
     DrawPlayer(game_controller, ATTACK_MODE);
 
-    //Check which direction the player is facing to calculate the attack tile
+    // Check which direction the player is facing to calculate the attack tile
     switch (player->dir)
     {
     case UP:
@@ -484,7 +463,7 @@ void PlayerAttack(GameController *game_controller)
     }
     }
 
-    //Do nothing if the attack tile has an obstacle
+    // Do nothing if the attack tile has an obstacle
     if (game_controller->game_map[attack_loc_y][attack_loc_x] >= 3)
     {
         return;
@@ -492,7 +471,7 @@ void PlayerAttack(GameController *game_controller)
 
     game_controller->weapon_x = attack_loc_x, game_controller->weapon_y = attack_loc_y;
 
-    //Check if any enemy in the enemy list is in the attack tile
+    // Check if any enemy in the enemy list is in the attack tile
     for (int i = 0; i < game_controller->enemy_list.num_enemies; i++)
     {
         Enemy *enemy = &game_controller->enemy_list.enemies[i];
@@ -505,10 +484,9 @@ void PlayerAttack(GameController *game_controller)
         }
     }
 
-    //Draw attack weapon
+    // Draw attack weapon
     DrawWeapon(game_controller);
     game_controller->cancel_attack_timer = 1;
-
 }
 
 void CancelAttack(GameController *game_controller)
@@ -520,7 +498,7 @@ void CancelAttack(GameController *game_controller)
 
 void MoveEnemies(GameController *game_controller)
 {
-    //Move every active enemy towards the player
+    // Move every active enemy towards the player
     for (int i = 0; i < game_controller->enemy_list.num_enemies; i++)
     {
         Enemy *enemy = &(game_controller->enemy_list.enemies[i]);
@@ -576,7 +554,7 @@ void DrawScore(GameController *game_controller)
 {
     char temp_buffer[5], score[5];
     int currentScore = game_controller->score, i = 4, j = 0;
-    //Turn score to string
+    // Turn score to string
     do
     {
         temp_buffer[i] = (currentScore % 10) + '0';
@@ -591,7 +569,7 @@ void DrawScore(GameController *game_controller)
     score[j] = 0;
 
     stringFont((MAP_WIDTH / 2 - 5) * TILE_SIZE, TILE_SIZE, "Score: ", 0x00ffffff, LARGE_FONT);
-    //If the tiles are occupied by player, the tile will not be redrawn since it will erase the player
+    // If the tiles are occupied by player, the tile will not be redrawn since it will erase the player
     //
     if (game_controller->game_map[1][MAP_WIDTH / 2 + 2] != PLAYER_CODE)
     {
@@ -618,13 +596,13 @@ void DrawScore(GameController *game_controller)
         ReDrawMap(MAP_WIDTH / 2 + 4, 2, game_controller->map);
     }
 
-    //Display the score
+    // Display the score
     stringFont((MAP_WIDTH / 2 + 2) * TILE_SIZE, TILE_SIZE, score, 0x00ffffff, LARGE_FONT);
 }
 
 void DrawGameOver(GameController *game_controller)
 {
-    //Turn score to string
+    // Turn score to string
     char temp_buffer[5], score[5];
     int currentScore = game_controller->score, i = 4, j = 0;
     do
@@ -654,7 +632,7 @@ void DrawGameOver(GameController *game_controller)
 
 void CancelEnemyAttack(GameController *game_controller)
 {
-    //Loop through enemy list to cancel attacking enemy
+    // Loop through enemy list to cancel attacking enemy
     for (int i = 0; i < game_controller->enemy_list.num_enemies; i++)
     {
         Enemy *enemy = &(game_controller->enemy_list.enemies[i]);
@@ -672,13 +650,12 @@ void CancelEnemyAttack(GameController *game_controller)
         enemy->is_attack = 0;
         EraseEnemy(game_controller, enemy);
         DrawEnemy(game_controller, enemy);
-
     }
 }
 
 void DrawObstacle(GameController *game_controller)
 {
-    //Loop through game map and draw obstacle
+    // Loop through game map and draw obstacle
     for (int y = 0; y < MAP_HEIGHT; y++)
     {
         for (int x = 0; x < MAP_WIDTH; x++)
@@ -688,6 +665,5 @@ void DrawObstacle(GameController *game_controller)
                 drawCharacterImage(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, obstacle_allArray[(game_controller->game_map[y][x] - 3) + (game_controller->map == 0 ? 0 : (game_controller->map == 1 ? 3 : 6))]);
             }
         }
-        
     }
 }

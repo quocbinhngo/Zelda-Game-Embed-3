@@ -2,7 +2,7 @@
 #define _ENEMY_H
 
 #define ENEMY_SPEED 1
-#define MOVE_DELAY 10
+#define MOVE_DELAY 20
 #define NUM_EMEMIES 2000
 #define SPAWN_TIMER 50
 

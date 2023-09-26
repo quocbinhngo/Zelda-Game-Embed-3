@@ -409,6 +409,7 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
 
         if (!game_controller->is_game_active)
         {
+            uart_puts("Out becuase thid\n");
             break;
         }
 
@@ -431,12 +432,12 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
                 enemy_cnt++;
             }
 
-            if (game_controller->diff > 1)
-            {
-                InitEnemy(game_controller, 2, *diff + 1);
-                InitEnemy(game_controller, 3, *diff + 1);
-                enemy_cnt += 2;
-            }
+            // if (game_controller->diff > 1)
+            // {
+            //     InitEnemy(game_controller, 2, *diff + 1);
+            //     InitEnemy(game_controller, 3, *diff + 1);
+            //     enemy_cnt += 2;
+            // }
         }
 
         if (game_controller->cancel_attack_timer == CANCEL_ATTACK_TIMER)
@@ -462,7 +463,6 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
             ChangeWeapon(game_controller);
         }
 
-        // MoveEnemy(game_controller, &game_controller->enemy_list.enemies[0]);
         MoveEnemies(game_controller);
         CancelEnemyAttack(game_controller);
 
@@ -473,7 +473,9 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
         spawn_timer++;
     }
 
-    uart_puts("outside");
+    uart_puts("Player");
+    uart_dec(game_controller->player.hp);
+    uart_puts("\n");
 
     DrawMap(*map);
     DrawGameOver(game_controller);
