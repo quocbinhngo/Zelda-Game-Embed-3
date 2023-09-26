@@ -340,7 +340,7 @@ void diff_stage(stage *option, stage *main, int *diff, int *map)
     stringFont(350, 40, "Choose a difficulty: ", PRIMARY_COLOR, LARGE_FONT);
     update_diff_stage(diff);
 
-    stringFont(250, 40, "Choose a difficulty level", PRIMARY_COLOR, LARGE_FONT);
+    // stringFont(250, 40, "Choose a difficulty level", PRIMARY_COLOR, LARGE_FONT);
 
     int cont_loop = 1;
 
