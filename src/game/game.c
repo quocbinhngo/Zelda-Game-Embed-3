@@ -65,6 +65,7 @@ void game_mode()
         }
         case EXIT:
         {
+            // exit_stage()
             cont_loop = 0;
             break;
         }

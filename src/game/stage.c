@@ -340,8 +340,6 @@ void diff_stage(stage *option, stage *main, int *diff, int *map)
     stringFont(350, 40, "Choose a difficulty: ", PRIMARY_COLOR, LARGE_FONT);
     update_diff_stage(diff);
 
-    stringFont(250, 40, "Choose a difficulty level", PRIMARY_COLOR, LARGE_FONT);
-
     int cont_loop = 1;
 
     update_diff_stage(diff);
@@ -427,25 +425,21 @@ void game_stage(stage *main, GameController *game_controller, int *diff, int *ma
             spawn_timer = 0;
             enemy_cnt++;
 
-            // if (game_controller->diff > 0)
-            // {
-            //     uart_puts("init 2nd enemy\n");
-            //     InitEnemy(game_controller, 1);
-            //     enemy_cnt++;
-            // }
+            if (game_controller->diff > 0)
+            {
+                uart_puts("init 2nd enemy\n");
+                InitEnemy(game_controller, 1, *diff + 1);
+                enemy_cnt++;
+            }
 
-            // if (game_controller->diff > 1)
-            // {
-            //     InitEnemy(game_controller, 2);
-            //     InitEnemy(game_controller, 3);
-            //     enemy_cnt += 2;
-            // }
+            if (game_controller->diff > 1)
+            {
+                InitEnemy(game_controller, 2, *diff + 1);
+                InitEnemy(game_controller, 3, *diff + 1);
+                enemy_cnt += 2;
+            }
         }
 
-        uart_puts("Cancel attack: ");
-        uart_dec(game_controller->cancel_attack_timer);
-        uart_puts("\n");
-        
         if (game_controller->cancel_attack_timer == CANCEL_ATTACK_TIMER)
         {
             game_controller->cancel_attack_timer = 0;

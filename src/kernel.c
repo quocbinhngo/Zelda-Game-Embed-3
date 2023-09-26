@@ -10,19 +10,19 @@
 #define VIDEO_MODE 2
 #define FONT_MODE 3
 #define GAME_MODE 4
-#define feature IMAGE_MODE
+#define feature GAME_MODE
 
 void main()
 {
     // set up serial console
     uart_init();
-#if feature == 1
+#if feature == IMAGE_MODE
     image_mode();
-#elif feature == 2
+#elif feature == VIDEO_MODE
     video_mode();
-#elif feature == 3
+#elif feature == FONT_MODE
     font_mode();
-#elif feature == 4
+#elif feature == GAME_MODE
     game_mode();
 #endif
 }
