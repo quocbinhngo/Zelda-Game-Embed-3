@@ -6,7 +6,10 @@
 
 void video_mode(){
     framebf_init(SCREEN_WIDTH, SCREEN_HEIGHT, VID_WIDTH, VID_HEIGHT);
-    display_video(0, 0, VID_WIDTH, VID_HEIGHT, 45, epd_bitmap_allArray);
+    while(1){
+        display_video(0, 0, VID_WIDTH, VID_HEIGHT, 45, epd_bitmap_allArray);
+    }
+    
 }
 
 void display_video(int x, int y, int w, int h, int num_frames, const unsigned long **video)

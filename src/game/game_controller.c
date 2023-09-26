@@ -10,6 +10,7 @@
 
 int IsMoveInput(char c)
 {
+    //Check if input is w, a, s, d
     switch (c)
     {
     case 'a':
@@ -19,7 +20,6 @@ int IsMoveInput(char c)
     {
         return 1;
     }
-    /* code */
     default:
     {
         return 0;
@@ -29,20 +29,11 @@ int IsMoveInput(char c)
 
 int IsAttackInput(char c)
 {
-    switch (c)
-    {
-    case 'j':
-    {
-        return 1;
-    }
-    /* code */
-    default:
-    {
-        return 0;
-    }
-    }
+    //Check if input is j
+    return c == 'j';
 }
 
+//Check if input is space
 int IsExitGameInput(char key) { return key == ' '; }
 
 void StartGame(GameController *game_controller, int *map)
